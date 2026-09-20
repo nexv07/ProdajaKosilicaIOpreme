@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oglasi | Kosilice Plus</title>
+  <link rel="stylesheet" href="Oglasi.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo"><img src="../SajtZaProdajuKosilica/Images/kosilicalogo.png" alt="Kosilica"> <span>Kosilice Plus</span></h1>
+    <nav><a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#ponuda">Ponuda</a><a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#kontakt">Kontakt</a><a href="Oglasi.html">Oglasi</a><div class="korisnik" id="korisnik"></div></nav>
+  </header>
+  <main>
+    <aside class="filter-panel" aria-label="Filteri oglasa">
+      <h2>Filteri</h2>
+      <fieldset>
+        <legend>Vrsta pogona</legend>
+        <label><input type="checkbox" name="vrsta-pogona" value="Benzin/mesavina"> Benzin/mesavina</label>
+        <label><input type="checkbox" name="vrsta-pogona" value="Elektro"> Elektro</label>
+        <label><input type="checkbox" name="vrsta-pogona" value="Akumulatorski"> Akumulatorski</label>
+        <label><input type="checkbox" name="vrsta-pogona" value="Ostalo"> Ostalo</label>
+      </fieldset>
+      <fieldset>
+        <legend>Stanje</legend>
+        <label><input type="radio" name="stanje" value="" checked> Svi oglasi</label>
+        <label><input type="radio" name="stanje" value="Polovno"> Polovno</label>
+        <label><input type="radio" name="stanje" value="Novo"> Novo</label>
+      </fieldset>
+      <button id="primeni-filtere" class="dugme" type="button">Primeni filtere</button>
+    </aside>
+    <div class="lista-oglasa">
+      <div id="baza-oglasi"></div>
+      <p id="nema-oglasa" class="nema-oglasa" hidden>Nema oglasa koji odgovaraju izabranim filterima.</p>
+    </div>
+  </main>
+  <script src="Oglasi.js"></script>
+</body>
+</html>

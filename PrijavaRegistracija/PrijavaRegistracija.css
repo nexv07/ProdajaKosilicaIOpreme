@@ -1,0 +1,22 @@
+:root { --zelena: #2f7d32; --tamna: #17321d; --pozadina: #f4f8f1; --siva: #6a746d; --greska: #b3261e; }
+* { box-sizing: border-box; }
+body { position: relative; isolation: isolate; overflow-x: hidden; min-height: 100vh; display: grid; place-items: center; margin: 0; padding: 24px; font-family: Arial, sans-serif; color: var(--tamna); background-color: #b7f7b7; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.42; background: radial-gradient(circle at 15% 20%, #d9ff8a 0 8%, transparent 28%), radial-gradient(circle at 88% 25%, #39c98a 0 6%, transparent 25%), radial-gradient(circle at 72% 86%, #008f72 0 7%, transparent 30%), linear-gradient(135deg, rgba(47, 170, 72, 0.72), rgba(164, 214, 76, 0.5) 48%, rgba(0, 151, 136, 0.62)); }
+body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.32; background: radial-gradient(circle at 18% 35%, transparent 0 54px, rgba(231, 255, 178, 0.75) 56px 59px, transparent 61px), radial-gradient(circle at 82% 70%, transparent 0 82px, rgba(0, 116, 92, 0.65) 84px 88px, transparent 90px), linear-gradient(45deg, transparent 48%, rgba(236, 255, 190, 0.45) 49% 50%, transparent 51%) 0 0 / 190px 190px, linear-gradient(-45deg, transparent 48%, rgba(0, 124, 92, 0.35) 49% 50%, transparent 51%) 0 0 / 250px 250px; }
+.okvir { width: min(100%, 430px); padding: 34px; background: white; border-radius: 16px; box-shadow: 0 8px 30px #17321d24; }
+.zaglavlje { margin-bottom: 24px; text-align: center; }
+.zaglavlje a { color: var(--zelena); text-decoration: none; font-weight: bold; }
+h1 { margin: 8px 0; font-size: 1.8rem; }
+.podnaslov { margin: 0; color: var(--siva); }
+.tabovi { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 22px; border-bottom: 1px solid #dfe6df; }
+.tab { padding: 12px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--siva); cursor: pointer; font-size: 1rem; font-weight: bold; }
+.tab.aktivan { color: var(--zelena); border-bottom-color: var(--zelena); }
+.polje { margin-bottom: 16px; }
+label { display: block; margin-bottom: 6px; font-weight: bold; }
+input { width: 100%; padding: 12px; border: 1px solid #cbd5cc; border-radius: 8px; font-size: 1rem; }
+input:focus { outline: 2px solid #a9d5aa; border-color: var(--zelena); }
+.dugme { width: 100%; padding: 13px; border: 0; border-radius: 8px; background: var(--zelena); color: white; cursor: pointer; font-size: 1rem; font-weight: bold; }
+.dugme:hover { background: #256528; }
+.poruka { min-height: 24px; margin: 14px 0 0; text-align: center; font-weight: bold; }
+.uspesno { color: var(--zelena); } .neuspesno { color: var(--greska); } .sakriveno { display: none; }
+.napomena { margin-top: 22px; color: var(--siva); font-size: .85rem; text-align: center; }

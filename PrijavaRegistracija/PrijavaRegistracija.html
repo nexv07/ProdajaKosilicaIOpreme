@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prijava i registracija | Kosilice Plus</title>
+  <link rel="stylesheet" href="PrijavaRegistracija.css">
+</head>
+<body>
+  <main class="okvir">
+    <div class="zaglavlje">
+      <a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html">🌿 Kosilice Plus</a>
+      <h1>Dobro došli</h1>
+      <p class="podnaslov">Prijavite se ili napravite novi nalog</p>
+    </div>
+    <div class="tabovi"><button class="tab aktivan" id="tab-prijava" type="button">Prijava</button><button class="tab" id="tab-registracija" type="button">Novi nalog</button></div>
+
+    <form id="forma-prijava">
+      <div class="polje"><label for="prijava-korisnicko-ime">Korisničko ime</label><input id="prijava-korisnicko-ime" type="text" autocomplete="username" required></div>
+      <div class="polje"><label for="prijava-sifra">Šifra</label><input id="prijava-sifra" type="password" autocomplete="current-password" required></div>
+      <button class="dugme" type="submit">Uloguj se</button>
+    </form>
+
+    <form id="forma-registracija" class="sakriveno">
+      <div class="polje"><label for="registracija-email">Email</label><input id="registracija-email" type="email" autocomplete="email" required></div>
+      <div class="polje"><label for="registracija-broj-telefona">Broj telefona</label><input id="registracija-broj-telefona" type="tel" autocomplete="tel" required></div>
+      <div class="polje"><label for="registracija-korisnicko-ime">Korisničko ime</label><input id="registracija-korisnicko-ime" type="text" minlength="3" autocomplete="username" required></div>
+      <div class="polje"><label for="registracija-sifra">Šifra</label><input id="registracija-sifra" type="password" minlength="6" autocomplete="new-password" required></div>
+      <button class="dugme" type="submit">Napravi nalog</button>
+    </form>
+    <p id="poruka" class="poruka" aria-live="polite"></p>
+    <p class="napomena">Demo verzija: nalozi se čuvaju samo u ovom pregledaču.</p>
+  </main>
+  <script src="PrijavaRegistracija.js"></script>
+</body>
+</html>

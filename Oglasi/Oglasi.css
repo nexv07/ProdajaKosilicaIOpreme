@@ -1,0 +1,65 @@
+:root { --zelena: #2f7d32; --tamna: #17321d; --svetla: #f4f8f1; --narandzasta: #f39a34; }
+* { box-sizing: border-box; }
+body { position: relative; isolation: isolate; overflow-x: hidden; margin: 0; font-family: Arial, sans-serif; color: var(--tamna); background-color: #b7f7b7; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.42; background: radial-gradient(circle at 15% 20%, #d9ff8a 0 8%, transparent 28%), radial-gradient(circle at 88% 25%, #39c98a 0 6%, transparent 25%), radial-gradient(circle at 72% 86%, #008f72 0 7%, transparent 30%), linear-gradient(135deg, rgba(47, 170, 72, 0.72), rgba(164, 214, 76, 0.5) 48%, rgba(0, 151, 136, 0.62)); }
+body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.32; background: radial-gradient(circle at 18% 35%, transparent 0 54px, rgba(231, 255, 178, 0.75) 56px 59px, transparent 61px), radial-gradient(circle at 82% 70%, transparent 0 82px, rgba(0, 116, 92, 0.65) 84px 88px, transparent 90px), linear-gradient(45deg, transparent 48%, rgba(236, 255, 190, 0.45) 49% 50%, transparent 51%) 0 0 / 190px 190px, linear-gradient(-45deg, transparent 48%, rgba(0, 124, 92, 0.35) 49% 50%, transparent 51%) 0 0 / 250px 250px; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 12px 7%; background: var(--zelena); color: white; }
+header h1 { margin: 0; font-size: 1.5rem; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo img { width: 48px; height: 48px; object-fit: contain; }
+nav { display: flex; align-items: center; gap: 18px; }
+nav a { color: white; text-decoration: none; font-weight: bold; }
+.korisnik { position: relative; font-size: 1rem; font-weight: bold; }
+.korisnicko-ime { padding: 0; border: 0; background: transparent; color: white; cursor: pointer; font: inherit; }
+.korisnicko-ime:hover { text-decoration: underline; }
+.rotacija { animation: okreniIme .6s ease-in-out; }
+@keyframes okreniIme { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+.padajuci-meni { position: absolute; top: calc(100% + 10px); right: 0; z-index: 10; display: none; min-width: 120px; padding: 8px; border-radius: 8px; background: white; box-shadow: 0 4px 14px #17321d33; }
+.padajuci-meni.otvoren { display: block; }
+.kreiraj-oglas { display: block; padding: 9px 14px; color: var(--tamna); text-decoration: none; white-space: nowrap; }
+.kreiraj-oglas:hover { background: var(--svetla); }
+.korisnik .odjava { width: 100%; padding: 9px 14px; border: 0; border-radius: 6px; background: var(--zelena); color: white; cursor: pointer; font-size: 1rem; font-weight: bold; }
+.korisnik .odjava:hover { background: #256528; }
+.dugme { display: inline-block; padding: 12px 24px; border: 0; border-radius: 8px; background: var(--narandzasta); color: #241607; text-decoration: none; font: inherit; font-weight: bold; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+.dugme:hover { transform: translateY(-4px); box-shadow: 0 6px 16px #2f7d3266; }
+main { display: flex; align-items: flex-start; gap: 24px; max-width: 1250px; margin: 0 auto; padding: 28px 16px 40px; }
+.filter-panel { flex: 0 0 230px; padding: 20px; border-radius: 12px; background: white; box-shadow: 0 4px 16px #17321d1a; }
+.filter-panel h2 { margin: 0 0 18px; font-size: 1.25rem; }
+.filter-panel fieldset { margin: 0 0 18px; padding: 0; border: 0; }
+.filter-panel legend { margin-bottom: 8px; font-weight: bold; }
+.filter-panel label { display: block; margin: 7px 0; }
+.filter-panel input { margin-right: 6px; }
+.filter-panel .dugme { width: 100%; margin: 4px 0 0; }
+.lista-oglasa { flex: 1; min-width: 0; }
+.oglas { position: relative; width: 700px; max-width: 100%; height: 350px; margin: 0 auto; padding: 10px; border-radius: 16px; background: white; box-shadow: 0 4px 16px #17321d1a; }
+.oglas[data-oglas-id] { cursor: pointer; }
+.oglas[data-oglas-id]:hover { box-shadow: 0 8px 22px #17321d40; }
+.oglas + .oglas { margin-top: 25px; }
+.okvir-slike { position: absolute; top: 10px; left: 10px; width: 330px; height: 330px; border: 2px solid var(--zelena); border-radius: 8px; overflow: hidden; }
+.podaci-oglasa { position: absolute; top: 10px; right: 10px; bottom: 10px; left: 350px; display: flex; flex-direction: column; }
+.podaci-oglasa p { margin: 0 0 10px; text-align: center; }
+.podaci-oglasa .naziv-oglasa { margin-top: 20px; font-size: 19px; }
+.podaci-oglasa .vrsta-pogona { margin-top: 20px; }
+.podaci-oglasa .opis { max-width: 100%; margin-top: 10px; color: #48634d; }
+.donji-podaci { display: flex; flex-direction: column; align-items: flex-end; gap: 35px; margin-top: auto; }
+.donji-podaci p { margin: 0; }
+.donji-podaci .cena { align-self: center; }
+.donji-podaci .cena { color: var(--zelena); font-size: 1.25rem; font-weight: bold; }
+.oglas-tamni { background: #205b27; }
+.oglas-tamni .okvir-slike { border-color: white; }
+.oglas-tamni .podaci-oglasa { color: white; paint-order: stroke fill; }
+.oglas-tamni .podaci-oglasa .opis { color: white; }
+.oglas-tamni .donji-podaci .cena { color: white; -webkit-text-stroke: 0; }
+#baza-oglasi { display: flex; flex-direction: column; align-items: center; }
+.greska-baze { color: #a32626; font-weight: bold; }
+#baza-oglasi .oglas { margin-left: 0; margin-right: 0; }
+.nema-oglasa { text-align: center; font-weight: bold; }
+.oglas-polovno { background: #205b27; color: white; }
+.oglas-polovno .podaci-oglasa, .oglas-polovno .podaci-oglasa * { color: white; }
+.oglas-polovno .okvir-slike { border-color: white; }
+.oglas-polovno .cena { color: white; }
+.oglas-novo { background: white; color: var(--tamna); }
+.okvir-slike img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 900px) { main { flex-direction: column; } .filter-panel { width: 100%; } .filter-panel fieldset { display: inline-flex; flex-wrap: wrap; gap: 0 16px; margin-right: 20px; vertical-align: top; } .filter-panel label { margin: 4px 0; } .filter-panel .dugme { max-width: 230px; } }
+@media (max-width: 720px) { .oglas { height: 530px; } .podaci-oglasa { top: 350px; left: 10px; right: 10px; } }
+@media (max-width: 600px) { header { flex-direction: column; text-align: center; } nav { flex-wrap: wrap; justify-content: center; gap: 12px; } }

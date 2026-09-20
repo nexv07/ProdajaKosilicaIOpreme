@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kreiranje oglasa | Kosilice Plus</title>
+  <link rel="stylesheet" href="KreiranjeOglasa.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo"><img src="../SajtZaProdajuKosilica/Images/kosilicalogo.png" alt="Kosilica"> <span>Kosilice Plus</span></h1>
+    <nav><a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#ponuda">Ponuda</a><a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#kontakt">Kontakt</a><a href="../Oglasi/Oglasi.html">Oglasi</a><div class="korisnik" id="korisnik"></div></nav>
+  </header>
+  <main>
+    <section class="forma-okvir">
+      <h2>Kreiranje oglasa</h2>
+      <form id="forma-oglasa" enctype="multipart/form-data">
+        <div class="polje">
+          <label for="ime-oglasa">Ime oglasa</label>
+          <input id="ime-oglasa" name="imeOglasa" type="text" required>
+        </div>
+        <div class="polje">
+          <label for="vrsta-pogona">Vrsta pogona</label>
+          <select id="vrsta-pogona" name="vrstaPogona" required>
+            <option value="" selected disabled>Izaberite vrstu pogona</option>
+            <option value="Benzin/mesavina">Benzin/mesavina</option>
+            <option value="Elektro">Elektro</option>
+            <option value="Akumulatorski">Akumulatorski</option>
+            <option value="Ostalo">Ostalo</option>
+          </select>
+        </div>
+        <div class="polje">
+          <label for="cena">Cena</label>
+          <input id="cena" name="cena" type="number" min="0" step="0.01" required>
+        </div>
+        <div class="polje">
+          <label for="slika-proizvoda">Slika proizvoda</label>
+          <input id="slika-proizvoda" name="slika" type="file" accept="image/*" required>
+        </div>
+        <fieldset class="polje stanje">
+          <legend>Stanje proizvoda</legend>
+          <label><input type="radio" name="stanje" value="Polovno" required> Polovna</label>
+          <label><input type="radio" name="stanje" value="Novo"> Nova</label>
+        </fieldset>
+        <div class="polje">
+          <label for="mesto-prodavca">Mesto prodavca</label>
+          <input id="mesto-prodavca" name="mestoProdavca" type="text" required>
+        </div>
+        <div class="polje">
+          <label for="dodatne-informacije">Dodatne informacije o proizvodu</label>
+          <textarea id="dodatne-informacije" name="dodatneInformacije" rows="5" required></textarea>
+        </div>
+        <button class="dugme" type="submit">Objavi oglas</button>
+      </form>
+      <p id="poruka" class="poruka" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="KreiranjeOglasa.js"></script>
+</body>
+</html>
