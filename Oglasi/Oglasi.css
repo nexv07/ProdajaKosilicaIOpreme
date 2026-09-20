@@ -31,17 +31,17 @@ main { display: flex; align-items: flex-start; gap: 24px; max-width: 1250px; mar
 .filter-panel input { margin-right: 6px; }
 .filter-panel .dugme { width: 100%; margin: 4px 0 0; }
 .lista-oglasa { flex: 1; min-width: 0; }
-.oglas { position: relative; width: 700px; max-width: 100%; height: 350px; margin: 0 auto; padding: 10px; border-radius: 16px; background: white; box-shadow: 0 4px 16px #17321d1a; }
+.oglas { position: relative; width: 700px; max-width: 100%; min-height: 350px; margin: 0 auto; padding: 10px; border-radius: 16px; background: white; box-shadow: 0 4px 16px #17321d1a; }
 .oglas[data-oglas-id] { cursor: pointer; }
 .oglas[data-oglas-id]:hover { box-shadow: 0 8px 22px #17321d40; }
 .oglas + .oglas { margin-top: 25px; }
 .okvir-slike { position: absolute; top: 10px; left: 10px; width: 330px; height: 330px; border: 2px solid var(--zelena); border-radius: 8px; overflow: hidden; }
-.podaci-oglasa { position: absolute; top: 10px; right: 10px; bottom: 10px; left: 350px; display: flex; flex-direction: column; }
-.podaci-oglasa p { margin: 0 0 10px; text-align: center; }
+.podaci-oglasa { position: absolute; top: 10px; right: 10px; bottom: 10px; left: 350px; display: flex; min-width: 0; flex-direction: column; }
+.podaci-oglasa p { margin: 0 0 10px; text-align: center; overflow-wrap: anywhere; }
 .podaci-oglasa .naziv-oglasa { margin-top: 20px; font-size: 19px; }
 .podaci-oglasa .vrsta-pogona { margin-top: 20px; }
 .podaci-oglasa .opis { max-width: 100%; margin-top: 10px; color: #48634d; }
-.donji-podaci { display: flex; flex-direction: column; align-items: flex-end; gap: 35px; margin-top: auto; }
+.donji-podaci { display: flex; flex-direction: column; align-items: flex-end; gap: 35px; min-width: 0; margin-top: auto; }
 .donji-podaci p { margin: 0; }
 .donji-podaci .cena { align-self: center; }
 .donji-podaci .cena { color: var(--zelena); font-size: 1.25rem; font-weight: bold; }
@@ -61,5 +61,20 @@ main { display: flex; align-items: flex-start; gap: 24px; max-width: 1250px; mar
 .oglas-novo { background: white; color: var(--tamna); }
 .okvir-slike img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 900px) { main { flex-direction: column; } .filter-panel { width: 100%; } .filter-panel fieldset { display: inline-flex; flex-wrap: wrap; gap: 0 16px; margin-right: 20px; vertical-align: top; } .filter-panel label { margin: 4px 0; } .filter-panel .dugme { max-width: 230px; } }
-@media (max-width: 720px) { .oglas { height: 530px; } .podaci-oglasa { top: 350px; left: 10px; right: 10px; } }
+@media (max-width: 720px) {
+  .oglas { display: flex; width: 100%; min-height: 0; height: auto; flex-direction: column; gap: 14px; }
+  .okvir-slike { position: relative; top: auto; left: auto; width: 100%; height: auto; aspect-ratio: 1; flex: 0 0 auto; }
+  .podaci-oglasa { position: relative; inset: auto; display: flex; min-height: 260px; flex: 0 0 auto; }
+  .podaci-oglasa .naziv-oglasa,
+  .podaci-oglasa .vrsta-pogona { margin-top: 0; }
+  .donji-podaci { gap: 12px; }
+}
+@media (max-width: 400px) {
+  main { padding-right: 10px; padding-left: 10px; }
+  .filter-panel { padding: 14px; }
+  .filter-panel fieldset { display: block; margin-right: 0; }
+  .filter-panel .dugme { max-width: none; }
+  .oglas { padding: 8px; }
+  .podaci-oglasa { min-height: 280px; }
+}
 @media (max-width: 600px) { header { flex-direction: column; text-align: center; } nav { flex-wrap: wrap; justify-content: center; gap: 12px; } }
