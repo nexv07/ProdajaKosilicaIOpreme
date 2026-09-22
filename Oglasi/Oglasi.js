@@ -1,5 +1,7 @@
 const korisnikElement = document.getElementById('korisnik');
 const filterDugme = document.getElementById('primeni-filtere');
+const listaOglasa = document.getElementById('baza-oglasi');
+const porukaNemaOglasa = document.getElementById('nema-oglasa');
 const vrstaPogonaIzUrl = new URLSearchParams(window.location.search).get('vrstaPogona');
 
 if (vrstaPogonaIzUrl) {
@@ -8,45 +10,19 @@ if (vrstaPogonaIzUrl) {
   if (filterVrstePogona) filterVrstePogona.checked = true;
 }
 
-function primeniFiltere() {
-  const izabraneVrstePogona = new Set(
-    [...document.querySelectorAll('input[name="vrsta-pogona"]:checked')].map(input => input.value)
-  );
-  const izabranoStanje = document.querySelector('input[name="stanje"]:checked').value;
-  const oglasi = document.querySelectorAll('.oglas[data-oglas-id]');
-  let brojPrikazanihOglasa = 0;
-
-  oglasi.forEach(oglas => {
-    const odgovaraVrsti = izabraneVrstePogona.size === 0 || izabraneVrstePogona.has(oglas.dataset.vrstaPogona);
-    const odgovaraStanju = izabranoStanje === '' || izabranoStanje === oglas.dataset.stanje;
-    const prikazi = odgovaraVrsti && odgovaraStanju;
-    oglas.hidden = !prikazi;
-    if (prikazi) brojPrikazanihOglasa += 1;
-  });
-
-  document.getElementById('nema-oglasa').hidden = brojPrikazanihOglasa !== 0;
+function procitajFiltere() {
+  return {
+    vrstePogona: [...document.querySelectorAll('input[name="vrsta-pogona"]:checked')].map(input => input.value),
+    stanje: document.querySelector('input[name="stanje"]:checked')?.value ?? ''
+  };
 }
 
-filterDugme.addEventListener('click', primeniFiltere);
-
-document.querySelectorAll('.oglas[data-oglas-id]').forEach(oglas => {
-  const otvoriOglas = () => {
-    window.location.href = `../KonkretanOglas/KonkretanOglas.html?id=${oglas.dataset.oglasId}`;
-  };
-  oglas.addEventListener('click', otvoriOglas);
-  oglas.addEventListener('keydown', dogadjaj => {
-    if (dogadjaj.key === 'Enter' || dogadjaj.key === ' ') {
-      dogadjaj.preventDefault();
-      otvoriOglas();
-    }
-  });
-});
-
-document.querySelectorAll('.opis[data-opis]').forEach(opis => {
-  const tekst = opis.dataset.opis.trim();
-  opis.textContent = tekst.length > 60 ? tekst.slice(0, 60).trimEnd() + '...' : tekst;
-});
-
+function napraviUrlZaOglase({ vrstePogona, stanje }) {
+  const parametri = new URLSearchParams({ akcija: 'oglasi' });
+  vrstePogona.forEach(vrsta => parametri.append('vrstaPogona[]', vrsta));
+  if (stanje) parametri.set('stanje', stanje);
+  return `../Baza/api.php?${parametri.toString()}`;
+}
 function tekstZaPrikaz(tekst) {
   return tekst.length > 60 ? tekst.slice(0, 60).trimEnd() + '...' : tekst;
 }
@@ -66,15 +42,20 @@ function poveziOglas(oglas, element = document.querySelector(`[data-oglas-id="${
   });
 }
 
-fetch('../Baza/api.php?akcija=oglasi')
-  .then(odgovor => odgovor.json())
-  .then(rezultat => {
+async function ucitajOglase() {
+  listaOglasa.replaceChildren();
+  porukaNemaOglasa.hidden = true;
+  listaOglasa.setAttribute('aria-busy', 'true');
+
+  try {
+    const odgovor = await fetch(napraviUrlZaOglase(procitajFiltere()));
+    const rezultat = await odgovor.json();
     if (!rezultat.uspeh) throw new Error(rezultat.poruka);
-    const lista = document.getElementById('baza-oglasi');
+
     rezultat.oglasi.forEach(oglas => {
       const stanjeKlasa = oglas.StanjeProizvoda === 'Novo' ? 'oglas-novo' : 'oglas-polovno';
-      lista.insertAdjacentHTML('beforeend', `
-        <div class="oglas ${stanjeKlasa}" data-oglas-id="${oglas.IDOglasa}" data-vrsta-pogona="${bezbedanTekst(oglas.VrstaPogona)}" data-stanje="${bezbedanTekst(oglas.StanjeProizvoda)}" role="link" tabindex="0" aria-label="Otvori detalje oglasa ${bezbedanTekst(oglas.ImeOglasa)}">
+      listaOglasa.insertAdjacentHTML('beforeend', `
+        <div class="oglas ${stanjeKlasa}" data-oglas-id="${oglas.IDOglasa}" role="link" tabindex="0" aria-label="Otvori detalje oglasa ${bezbedanTekst(oglas.ImeOglasa)}">
           <div class="okvir-slike"><img src="data:image/jpeg;base64,${oglas.SlikaProizvoda}" alt="${bezbedanTekst(oglas.ImeOglasa)}"></div>
           <div class="podaci-oglasa">
             <p class="naziv-oglasa"><strong>${bezbedanTekst(oglas.ImeOglasa)}</strong></p>
@@ -83,13 +64,18 @@ fetch('../Baza/api.php?akcija=oglasi')
             <div class="donji-podaci"><p class="cena"><strong>${bezbedanTekst(oglas.Cena)} RSD</strong></p><p class="mesto-prodavca"><strong>${bezbedanTekst(oglas.MestoProdavca)}</strong></p></div>
           </div>
         </div>`);
-      poveziOglas(oglas, lista.lastElementChild);
+      poveziOglas(oglas, listaOglasa.lastElementChild);
     });
-    primeniFiltere();
-  })
-  .catch(greska => {
-    document.getElementById('baza-oglasi').innerHTML = `<p class="greska-baze">${bezbedanTekst(greska.message || 'Oglasi trenutno nisu dostupni.')}</p>`;
-  });
+    porukaNemaOglasa.hidden = rezultat.oglasi.length !== 0;
+  } catch (greska) {
+    listaOglasa.innerHTML = `<p class="greska-baze">${bezbedanTekst(greska.message || 'Oglasi trenutno nisu dostupni.')}</p>`;
+  } finally {
+    listaOglasa.removeAttribute('aria-busy');
+  }
+}
+
+filterDugme.addEventListener('click', ucitajOglase);
+ucitajOglase();
 
 fetch('../Baza/api.php?akcija=sesija')
   .then(odgovor => odgovor.json())

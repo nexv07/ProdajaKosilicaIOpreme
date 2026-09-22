@@ -144,7 +144,52 @@ if ($akcija === 'kreirajOglas') {
 }
 
 if ($akcija === 'oglasi') {
-    $rezultati = $baza->query('SELECT `O`.`IDOglasa`, `O`.`BrojTelefona`, `O`.`ImeOglasa`, `O`.`VrstaPogona`, `O`.`Cena`, `O`.`StanjeProizvoda`, `O`.`MestoProdavca`, `O`.`DodatanInfo`, TO_BASE64(`O`.`SlikaProizvoda`) AS `SlikaProizvoda`, `N`.`KorisnickoIme` FROM `Oglas` `O` INNER JOIN `Nalog` `N` ON `N`.`IDNaloga` = `O`.`IDNaloga` ORDER BY `O`.`IDOglasa` DESC');
+    $dozvoljeneVrstePogona = ['Benzin/mesavina', 'Elektro', 'Akumulatorski', 'Ostalo'];
+    $ulazneVrstePogona = $_GET['vrstaPogona'] ?? [];
+    $ulazneVrstePogona = is_array($ulazneVrstePogona) ? $ulazneVrstePogona : [$ulazneVrstePogona];
+    $vrstePogona = array_values(array_intersect(
+        $dozvoljeneVrstePogona,
+        array_map(static fn($vrsta): string => (string)$vrsta, $ulazneVrstePogona)
+    ));
+    $stanje = (string)($_GET['stanje'] ?? '');
+
+    if ($stanje !== '' && !in_array($stanje, ['Polovno', 'Novo'], true)) {
+        odgovor(false, 'Izabrano stanje oglasa nije ispravno.', [], 400);
+    }
+
+    $uslovi = [];
+    $vrednosti = [];
+    $tipovi = '';
+    if ($vrstePogona) {
+        $mesta = implode(', ', array_fill(0, count($vrstePogona), '?'));
+        $uslovi[] = "`O`.`VrstaPogona` IN ($mesta)";
+        $tipovi .= str_repeat('s', count($vrstePogona));
+        $vrednosti = array_merge($vrednosti, $vrstePogona);
+    }
+    if ($stanje !== '') {
+        $uslovi[] = '`O`.`StanjeProizvoda` = ?';
+        $tipovi .= 's';
+        $vrednosti[] = $stanje;
+    }
+
+    $sql = 'SELECT `O`.`IDOglasa`, `O`.`BrojTelefona`, `O`.`ImeOglasa`, `O`.`VrstaPogona`, `O`.`Cena`, `O`.`StanjeProizvoda`, `O`.`MestoProdavca`, `O`.`DodatanInfo`, TO_BASE64(`O`.`SlikaProizvoda`) AS `SlikaProizvoda`, `N`.`KorisnickoIme` FROM `Oglas` `O` INNER JOIN `Nalog` `N` ON `N`.`IDNaloga` = `O`.`IDNaloga`';
+    if ($uslovi) {
+        $sql .= ' WHERE ' . implode(' AND ', $uslovi);
+    }
+    $sql .= ' ORDER BY `O`.`IDOglasa` DESC';
+
+    $upit = pripremi($baza, $sql);
+    if ($vrednosti) {
+        $parametri = [&$tipovi];
+        foreach ($vrednosti as $indeks => $vrednost) {
+            $parametri[] = &$vrednosti[$indeks];
+        }
+        call_user_func_array([$upit, 'bind_param'], $parametri);
+    }
+    if (!$upit->execute()) {
+        odgovor(false, 'Greška baze: ' . $upit->error, [], 500);
+    }
+    $rezultati = $upit->get_result();
     if (!$rezultati) {
         odgovor(false, 'Greška baze: ' . $baza->error, [], 500);
     }
