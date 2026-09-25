@@ -28,6 +28,17 @@
         <label><input type="radio" name="stanje" value="Novo"> Novo</label>
       </fieldset>
       <button id="primeni-filtere" class="dugme" type="button">Primeni filtere</button>
+      <form id="sort-form" class="filter-panel" aria-label="Sortiranje oglasa">
+        <h2>Sortiranje</h2>
+        <fieldset>
+          <legend>Sortiraj oglase</legend>
+          <label><input type="radio" name="sortiranje" value="najnoviji" checked> Najnoviji</label>
+          <label><input type="radio" name="sortiranje" value="najstariji"> Najstariji</label>
+          <label><input type="radio" name="sortiranje" value="cena-rastuce"> Cena rastuće</label>
+          <label><input type="radio" name="sortiranje" value="cena-opadajuce"> Cena opadajuće</label>
+        </fieldset>
+        <button class="dugme" type="submit">Primeni sortiranje</button>
+      </form>
     </aside>
     <div class="lista-oglasa">
       <div id="baza-oglasi"></div>

@@ -1,5 +1,6 @@
 const korisnikElement = document.getElementById('korisnik');
 const filterDugme = document.getElementById('primeni-filtere');
+const sortForma = document.getElementById('sort-form');
 const listaOglasa = document.getElementById('baza-oglasi');
 const porukaNemaOglasa = document.getElementById('nema-oglasa');
 const vrstaPogonaIzUrl = new URLSearchParams(window.location.search).get('vrstaPogona');
@@ -13,7 +14,8 @@ if (vrstaPogonaIzUrl) {
 function procitajFiltere() {
   return {
     vrstePogona: [...document.querySelectorAll('input[name="vrsta-pogona"]:checked')].map(input => input.value),
-    stanje: document.querySelector('input[name="stanje"]:checked')?.value ?? ''
+    stanje: document.querySelector('input[name="stanje"]:checked')?.value ?? '',
+    sortiranje: document.querySelector('input[name="sortiranje"]:checked')?.value ?? 'najnoviji'
   };
 }
 
@@ -23,6 +25,16 @@ function napraviUrlZaOglase({ vrstePogona, stanje }) {
   if (stanje) parametri.set('stanje', stanje);
   return `../Baza/api.php?${parametri.toString()}`;
 }
+
+function sortirajOglase(oglasi, sortiranje) {
+  return [...oglasi].sort((prvi, drugi) => {
+    if (sortiranje === 'najstariji') return Number(prvi.IDOglasa) - Number(drugi.IDOglasa);
+    if (sortiranje === 'cena-rastuce') return Number(prvi.Cena) - Number(drugi.Cena) || Number(drugi.IDOglasa) - Number(prvi.IDOglasa);
+    if (sortiranje === 'cena-opadajuce') return Number(drugi.Cena) - Number(prvi.Cena) || Number(drugi.IDOglasa) - Number(prvi.IDOglasa);
+    return Number(drugi.IDOglasa) - Number(prvi.IDOglasa);
+  });
+}
+
 function tekstZaPrikaz(tekst) {
   return tekst.length > 60 ? tekst.slice(0, 60).trimEnd() + '...' : tekst;
 }
@@ -46,13 +58,14 @@ async function ucitajOglase() {
   listaOglasa.replaceChildren();
   porukaNemaOglasa.hidden = true;
   listaOglasa.setAttribute('aria-busy', 'true');
+  const filteri = procitajFiltere();
 
   try {
-    const odgovor = await fetch(napraviUrlZaOglase(procitajFiltere()));
+    const odgovor = await fetch(napraviUrlZaOglase(filteri));
     const rezultat = await odgovor.json();
     if (!rezultat.uspeh) throw new Error(rezultat.poruka);
 
-    rezultat.oglasi.forEach(oglas => {
+    sortirajOglase(rezultat.oglasi, filteri.sortiranje).forEach(oglas => {
       const stanjeKlasa = oglas.StanjeProizvoda === 'Novo' ? 'oglas-novo' : 'oglas-polovno';
       listaOglasa.insertAdjacentHTML('beforeend', `
         <div class="oglas ${stanjeKlasa}" data-oglas-id="${oglas.IDOglasa}" role="link" tabindex="0" aria-label="Otvori detalje oglasa ${bezbedanTekst(oglas.ImeOglasa)}">
@@ -75,6 +88,10 @@ async function ucitajOglase() {
 }
 
 filterDugme.addEventListener('click', ucitajOglase);
+sortForma.addEventListener('submit', dogadjaj => {
+  dogadjaj.preventDefault();
+  ucitajOglase();
+});
 ucitajOglase();
 
 fetch('../Baza/api.php?akcija=sesija')
