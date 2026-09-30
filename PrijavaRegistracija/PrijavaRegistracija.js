@@ -22,14 +22,15 @@ tabRegistracija.addEventListener('click', () => promeniFormu(true));
 
 formaRegistracija.addEventListener('submit', async (dogadjaj) => {
   dogadjaj.preventDefault();
+  const ime = document.getElementById('registracija-ime').value.trim();
+  const prezime = document.getElementById('registracija-prezime').value.trim();
   const email = document.getElementById('registracija-email').value.trim();
+  const lozinku = document.getElementById('registracija-lozinku').value;
   const brojTelefona = document.getElementById('registracija-broj-telefona').value.trim();
-  const korisnickoIme = document.getElementById('registracija-korisnicko-ime').value.trim();
-  const sifra = document.getElementById('registracija-sifra').value;
   try {
     const odgovor = await fetch('../Baza/api.php?akcija=registracija', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, brojTelefona, korisnickoIme, sifra })
+      body: JSON.stringify({ ime, prezime, email, lozinku, brojTelefona })
     });
     const rezultat = await odgovor.json();
     if (!rezultat.uspeh) { prikaziPoruku(rezultat.poruka, false); return; }
@@ -41,12 +42,12 @@ formaRegistracija.addEventListener('submit', async (dogadjaj) => {
 
 formaPrijava.addEventListener('submit', async (dogadjaj) => {
   dogadjaj.preventDefault();
-  const korisnickoIme = document.getElementById('prijava-korisnicko-ime').value.trim();
-  const sifra = document.getElementById('prijava-sifra').value;
+  const email = document.getElementById('prijava-email').value.trim();
+  const lozinku = document.getElementById('prijava-lozinku').value;
   try {
     const odgovor = await fetch('../Baza/api.php?akcija=prijava', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ korisnickoIme, sifra })
+      body: JSON.stringify({ email, lozinku })
     });
     const rezultat = await odgovor.json();
     if (!rezultat.uspeh) { prikaziPoruku(rezultat.poruka, false); return; }

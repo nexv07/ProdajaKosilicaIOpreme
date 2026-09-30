@@ -46,7 +46,7 @@ fetch('../Baza/api.php?akcija=sesija')
       korisnikElement.innerHTML = '<a href="../PrijavaRegistracija/PrijavaRegistracija.html">Ulogujte se</a>';
       return;
     }
-    korisnikElement.innerHTML = `<button class="korisnicko-ime" type="button" aria-expanded="false">${rezultat.korisnickoIme}</button><div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><button class="odjava" type="button">Odjava</button></div>`;
+    korisnikElement.innerHTML = `<button class="korisnicko-ime" type="button" aria-expanded="false">${rezultat.korisnickoIme}</button><div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><a class="kreiraj-oglas moji-oglasi" href="../MojiOglasi/MojiOglasi.html">Moji oglasi</a><button class="odjava" type="button">Odjava</button></div>`;
     const imeDugme = korisnikElement.querySelector('.korisnicko-ime');
     const padajuciMeni = korisnikElement.querySelector('.padajuci-meni');
     imeDugme.addEventListener('click', () => {

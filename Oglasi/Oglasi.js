@@ -67,9 +67,12 @@ async function ucitajOglase() {
 
     sortirajOglase(rezultat.oglasi, filteri.sortiranje).forEach(oglas => {
       const stanjeKlasa = oglas.StanjeProizvoda === 'Novo' ? 'oglas-novo' : 'oglas-polovno';
+      const statusKlasa = oglas.Status === 'Prodat' ? ' oglas-prodat' : '';
+      const ikonicaPregleda = oglas.StanjeProizvoda === 'Novo' ? 'eye1.png' : 'eye2.png';
       listaOglasa.insertAdjacentHTML('beforeend', `
-        <div class="oglas ${stanjeKlasa}" data-oglas-id="${oglas.IDOglasa}" role="link" tabindex="0" aria-label="Otvori detalje oglasa ${bezbedanTekst(oglas.ImeOglasa)}">
+        <div class="oglas ${stanjeKlasa}${statusKlasa}" data-oglas-id="${oglas.IDOglasa}" role="link" tabindex="0" aria-label="Otvori detalje oglasa ${bezbedanTekst(oglas.ImeOglasa)}">
           <div class="okvir-slike"><img src="data:image/jpeg;base64,${oglas.SlikaProizvoda}" alt="${bezbedanTekst(oglas.ImeOglasa)}"></div>
+          <div class="broj-pregleda"><img src="../Imgs/${ikonicaPregleda}" alt="Broj pregleda"><span>${bezbedanTekst(oglas.BrojPregleda)}</span></div>
           <div class="podaci-oglasa">
             <p class="naziv-oglasa"><strong>${bezbedanTekst(oglas.ImeOglasa)}</strong></p>
             <p class="vrsta-pogona"><strong>${bezbedanTekst(oglas.VrstaPogona)}</strong></p>
@@ -103,7 +106,7 @@ fetch('../Baza/api.php?akcija=sesija')
     }
     korisnikElement.innerHTML = `
       <button class="korisnicko-ime" type="button" aria-expanded="false">${rezultat.korisnickoIme}</button>
-      <div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><button class="odjava" type="button">Odjava</button></div>`;
+      <div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><a class="kreiraj-oglas moji-oglasi" href="../MojiOglasi/MojiOglasi.html">Moji oglasi</a><button class="odjava" type="button">Odjava</button></div>`;
     const imeDugme = korisnikElement.querySelector('.korisnicko-ime');
     const padajuciMeni = korisnikElement.querySelector('.padajuci-meni');
     imeDugme.addEventListener('click', () => {
