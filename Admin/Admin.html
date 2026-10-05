@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Kosilice Plus</title>
+  <link rel="stylesheet" href="../Oglasi/Oglasi.css">
+  <link rel="stylesheet" href="Admin.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo"><img src="../SajtZaProdajuKosilica/Images/kosilicalogo.png" alt="Kosilica"> <span>Kosilice Plus</span></h1>
+    <nav>
+      <a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#ponuda">Ponuda</a>
+      <a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#kontakt">Kontakt</a>
+      <a href="../Oglasi/Oglasi.html">Oglasi</a>
+      <div class="korisnik" id="korisnik"></div>
+    </nav>
+  </header>
+
+  <main class="admin-main">
+    <section class="admin-okvir" aria-labelledby="naslov-stranice">
+      <div class="admin-zaglavlje">
+        <div>
+          <p class="admin-oznaka">Kontrolna tabla</p>
+          <h2 id="naslov-stranice">Korisnici</h2>
+        </div>
+        <p id="broj-korisnika" class="broj-korisnika"></p>
+      </div>
+      <form id="pretraga-forma" class="pretraga-forma" role="search">
+        <label class="sr-only" for="pretraga">Pretražite korisnike</label>
+        <input id="pretraga" type="search" placeholder="Pretraži po imenu ili prezimenu..." autocomplete="off">
+        <button class="dugme" type="submit">Pretraži</button>
+      </form>
+      <p id="poruka" class="poruka" aria-live="polite"></p>
+      <div id="lista-korisnika" class="lista-korisnika"></div>
+      <p id="ucitavanje" class="ucitavanje" hidden>Učitavanje korisnika...</p>
+      <p id="nema-korisnika" class="nema-korisnika" hidden>Nema korisnika koji odgovaraju pretrazi.</p>
+      <div id="sentinel" class="sentinel" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <script src="Admin.js"></script>
+</body>
+</html>

@@ -25,6 +25,23 @@ function pripremi(mysqli $baza, string $sql): mysqli_stmt
     return $upit;
 }
 
+function zahtevajAdmina(mysqli $baza): array
+{
+    if (!isset($_SESSION['email'])) {
+        odgovor(false, 'Morate biti ulogovani kao administrator.', [], 401);
+    }
+
+    $email = (string)$_SESSION['email'];
+    $upit = pripremi($baza, "SELECT `ID`, `Role` FROM `Nalog` WHERE `Email` = ? AND `Active` = 'Da' LIMIT 1");
+    $upit->bind_param('s', $email);
+    $upit->execute();
+    $nalog = $upit->get_result()->fetch_assoc();
+    if (!$nalog || $nalog['Role'] !== 'Admin') {
+        odgovor(false, 'Nemate dozvolu za pristup ovoj stranici.', [], 403);
+    }
+    return $nalog;
+}
+
 try {
     $baza = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
     $baza->set_charset('utf8mb4');
@@ -66,7 +83,7 @@ if ($akcija === 'registracija') {
 if ($akcija === 'prijava') {
     $email = trim((string)($ulaz['email'] ?? ''));
     $lozinku = (string)($ulaz['lozinku'] ?? '');
-    $upit = pripremi($baza, 'SELECT `Ime`, `Prezime`, `Email`, `Lozinku`, `Active` FROM `Nalog` WHERE `Email` = ? LIMIT 1');
+    $upit = pripremi($baza, 'SELECT `Ime`, `Prezime`, `Email`, `Lozinku`, `Role`, `Active` FROM `Nalog` WHERE `Email` = ? LIMIT 1');
     $upit->bind_param('s', $email);
     $upit->execute();
     $nalog = $upit->get_result()->fetch_assoc();
@@ -88,29 +105,85 @@ if ($akcija === 'prijava') {
 
     $_SESSION['email'] = $nalog['Email'];
     $imeZaPrikaz = $nalog['Ime'] . ' ' . $nalog['Prezime'];
-    odgovor(true, 'Uspešno ste se ulogovali.', ['ime' => $nalog['Ime'], 'prezime' => $nalog['Prezime'], 'korisnickoIme' => $imeZaPrikaz]);
+    odgovor(true, 'Uspešno ste se ulogovali.', ['ime' => $nalog['Ime'], 'prezime' => $nalog['Prezime'], 'korisnickoIme' => $imeZaPrikaz, 'role' => $nalog['Role']]);
 }
 
 if ($akcija === 'sesija') {
     if (!isset($_SESSION['email'])) {
-        odgovor(true, '', ['ulogovan' => false, 'ime' => null, 'prezime' => null, 'korisnickoIme' => null]);
+        odgovor(true, '', ['ulogovan' => false, 'ime' => null, 'prezime' => null, 'korisnickoIme' => null, 'role' => null]);
     }
-    $sesijaUpit = pripremi($baza, "SELECT `Ime`, `Prezime` FROM `Nalog` WHERE `Email` = ? AND `Active` = 'Da' LIMIT 1");
+    $sesijaUpit = pripremi($baza, "SELECT `Ime`, `Prezime`, `Role` FROM `Nalog` WHERE `Email` = ? AND `Active` = 'Da' LIMIT 1");
     $sesijaEmail = (string)$_SESSION['email'];
     $sesijaUpit->bind_param('s', $sesijaEmail);
     $sesijaUpit->execute();
     $sesijaNalog = $sesijaUpit->get_result()->fetch_assoc();
     if (!$sesijaNalog) {
-        odgovor(true, '', ['ulogovan' => false, 'ime' => null, 'prezime' => null, 'korisnickoIme' => null]);
+        odgovor(true, '', ['ulogovan' => false, 'ime' => null, 'prezime' => null, 'korisnickoIme' => null, 'role' => null]);
     }
     $imeZaPrikaz = $sesijaNalog['Ime'] . ' ' . $sesijaNalog['Prezime'];
-    odgovor(true, '', ['ulogovan' => true, 'ime' => $sesijaNalog['Ime'], 'prezime' => $sesijaNalog['Prezime'], 'korisnickoIme' => $imeZaPrikaz]);
+    odgovor(true, '', ['ulogovan' => true, 'ime' => $sesijaNalog['Ime'], 'prezime' => $sesijaNalog['Prezime'], 'korisnickoIme' => $imeZaPrikaz, 'role' => $sesijaNalog['Role']]);
 }
 
 if ($akcija === 'odjava') {
     $_SESSION = [];
     session_destroy();
     odgovor(true, 'Uspešno ste se odjavili.');
+}
+
+if ($akcija === 'adminKorisnici') {
+    $admin = zahtevajAdmina($baza);
+    $stranica = max(1, (int)($_GET['stranica'] ?? 1));
+    $poStranici = min(30, max(1, (int)($_GET['poStranici'] ?? 12)));
+    $pretraga = mb_substr(trim((string)($_GET['pretraga'] ?? '')), 0, 100);
+    $offset = ($stranica - 1) * $poStranici;
+    $obrazac = '%' . $pretraga . '%';
+
+    $broj = pripremi($baza, 'SELECT COUNT(*) AS `Ukupno` FROM `Nalog` WHERE `Ime` LIKE ? OR `Prezime` LIKE ? OR CONCAT(`Ime`, \' \', `Prezime`) LIKE ?');
+    $broj->bind_param('sss', $obrazac, $obrazac, $obrazac);
+    $broj->execute();
+    $ukupno = (int)$broj->get_result()->fetch_assoc()['Ukupno'];
+
+    $upit = pripremi($baza, 'SELECT `ID`, `Ime`, `Prezime`, `Email`, `BrojTelefona`, `Role`, `Active`, `CreatedAt` FROM `Nalog` WHERE `Ime` LIKE ? OR `Prezime` LIKE ? OR CONCAT(`Ime`, \' \', `Prezime`) LIKE ? ORDER BY `Ime` ASC, `Prezime` ASC, `ID` ASC LIMIT ? OFFSET ?');
+    $upit->bind_param('sssii', $obrazac, $obrazac, $obrazac, $poStranici, $offset);
+    $upit->execute();
+    odgovor(true, '', ['korisnici' => $upit->get_result()->fetch_all(MYSQLI_ASSOC), 'ukupno' => $ukupno, 'stranica' => $stranica, 'imaJos' => $offset + $poStranici < $ukupno, 'adminId' => (int)$admin['ID']]);
+}
+
+if ($akcija === 'adminPromeniStatus') {
+    $admin = zahtevajAdmina($baza);
+    $idNaloga = filter_var($_POST['idNaloga'] ?? null, FILTER_VALIDATE_INT);
+    $aktivnost = (string)($_POST['aktivnost'] ?? '');
+    if (!$idNaloga || !in_array($aktivnost, ['Da', 'Ne'], true)) {
+        odgovor(false, 'Podaci za promenu statusa nisu ispravni.', [], 400);
+    }
+    if ((int)$admin['ID'] === (int)$idNaloga) {
+        odgovor(false, 'Ne možete promeniti status sopstvenog naloga.', [], 400);
+    }
+    $upit = pripremi($baza, 'UPDATE `Nalog` SET `Active` = ? WHERE `ID` = ?');
+    $upit->bind_param('si', $aktivnost, $idNaloga);
+    $upit->execute();
+    if ($upit->affected_rows < 1) {
+        odgovor(false, 'Korisnik nije pronađen ili status nije promenjen.', [], 404);
+    }
+    odgovor(true, $aktivnost === 'Da' ? 'Nalog je aktiviran.' : 'Nalog je deaktiviran.');
+}
+
+if ($akcija === 'adminObrisiNalog') {
+    $admin = zahtevajAdmina($baza);
+    $idNaloga = filter_var($_POST['idNaloga'] ?? null, FILTER_VALIDATE_INT);
+    if (!$idNaloga) {
+        odgovor(false, 'Korisnik nije pronađen.', [], 404);
+    }
+    if ((int)$admin['ID'] === (int)$idNaloga) {
+        odgovor(false, 'Ne možete obrisati sopstveni nalog.', [], 400);
+    }
+    $upit = pripremi($baza, 'DELETE FROM `Nalog` WHERE `ID` = ?');
+    $upit->bind_param('i', $idNaloga);
+    $upit->execute();
+    if ($upit->affected_rows !== 1) {
+        odgovor(false, 'Korisnik nije pronađen.', [], 404);
+    }
+    odgovor(true, 'Nalog je obrisan.');
 }
 
 if ($akcija === 'kreirajOglas') {
