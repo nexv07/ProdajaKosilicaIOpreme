@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upravljanje oglasima | Kosilice Plus</title>
+  <link rel="stylesheet" href="../Oglasi/Oglasi.css">
+  <link rel="stylesheet" href="../Admin/Admin.css">
+  <link rel="stylesheet" href="UpravljanjeOglasima.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo"><img src="../SajtZaProdajuKosilica/Images/kosilicalogo.png" alt="Kosilica"> <span>Kosilice Plus</span></h1>
+    <nav>
+      <a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#ponuda">Ponuda</a>
+      <a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html#kontakt">Kontakt</a>
+      <a href="../Oglasi/Oglasi.html">Oglasi</a>
+      <div class="korisnik" id="korisnik"></div>
+    </nav>
+  </header>
+
+  <main class="admin-main upravljanje-main">
+    <section class="admin-okvir" aria-labelledby="naslov-stranice">
+      <div class="admin-zaglavlje">
+        <div>
+          <p class="admin-oznaka">Kontrolna tabla</p>
+          <h2 id="naslov-stranice">Upravljanje oglasima</h2>
+        </div>
+        <p id="broj-oglasa" class="broj-korisnika"></p>
+      </div>
+      <form id="pretraga-forma" class="pretraga-forma" role="search">
+        <label class="sr-only" for="pretraga">Pretražite oglase</label>
+        <input id="pretraga" type="search" placeholder="Pretraži po imenu oglasa..." autocomplete="off">
+        <button class="dugme" type="submit">Pretraži</button>
+      </form>
+      <p id="poruka" class="poruka" aria-live="polite"></p>
+      <div id="lista-oglasa" class="lista-upravljanje-oglasa"></div>
+      <p id="ucitavanje" class="ucitavanje" hidden>Učitavanje oglasa...</p>
+      <p id="nema-oglasa" class="nema-korisnika" hidden>Nema oglasa koji odgovaraju pretrazi.</p>
+      <div id="sentinel" class="sentinel" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <script src="UpravljanjeOglasima.js"></script>
+</body>
+</html>

@@ -22,7 +22,7 @@ function prikaziPoruku(tekst, uspesno) {
 }
 
 function postaviMeni(rezultat) {
-  korisnikElement.innerHTML = `<button class="korisnicko-ime" type="button" aria-expanded="false">${bezbedanTekst(rezultat.korisnickoIme)}</button><div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><a class="kreiraj-oglas" href="../MojiOglasi/MojiOglasi.html">Moji oglasi</a><a class="kreiraj-oglas" href="Admin.html">Admin</a><button class="odjava" type="button">Odjava</button></div>`;
+  korisnikElement.innerHTML = `<button class="korisnicko-ime" type="button" aria-expanded="false">${bezbedanTekst(rezultat.korisnickoIme)}</button><div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><a class="kreiraj-oglas" href="../MojiOglasi/MojiOglasi.html">Moji oglasi</a><a class="kreiraj-oglas" href="Admin.html">Korisnici</a><a class="kreiraj-oglas" href="../UpravljanjeOglasima/UpravljanjeOglasima.html">Upravljanje oglasima</a><button class="odjava" type="button">Odjava</button></div>`;
   const imeDugme = korisnikElement.querySelector('.korisnicko-ime');
   const padajuciMeni = korisnikElement.querySelector('.padajuci-meni');
   imeDugme.addEventListener('click', () => {
@@ -43,6 +43,9 @@ function karticaKorisnika(korisnik, adminId) {
   const datum = korisnik.CreatedAt ? new Date(korisnik.CreatedAt.replace(' ', 'T')).toLocaleDateString('sr-RS') : '';
   kartica.innerHTML = `<div><h3 class="ime-korisnika">${bezbedanTekst(korisnik.Ime)} ${bezbedanTekst(korisnik.Prezime)}</h3><p class="korisnik-email">${bezbedanTekst(korisnik.Email)}</p><p class="korisnik-datum">Registrovan: ${bezbedanTekst(datum)}</p></div><div><p class="korisnik-telefon">Telefon: ${bezbedanTekst(korisnik.BrojTelefona)}</p><div class="korisnik-meta"><span class="oznaka ${aktivan ? 'oznaka-aktivan' : 'oznaka-neaktivan'}">${aktivan ? 'Aktivan' : 'Neaktivan'}</span>${korisnik.Role === 'Admin' ? '<span class="oznaka oznaka-admin">Admin</span>' : ''}</div></div><div class="korisnik-akcije">${sopstveniNalog ? '<span class="oznaka oznaka-admin">Vi</span>' : `<button class="akcija-dugme status-dugme" type="button">${aktivan ? 'Deaktiviraj' : 'Aktiviraj'}</button><button class="akcija-dugme obrisi" type="button">Obriši</button>`}</div>`;
   if (!sopstveniNalog) {
+    kartica.querySelector('.korisnik-akcije').insertAdjacentHTML('afterbegin', `<label class="sr-only" for="uloga-${korisnik.ID}">Uloga korisnika</label><select class="uloga-izbor" id="uloga-${korisnik.ID}"><option value="Korisnik">Korisnik</option><option value="Admin">Admin</option></select><button class="akcija-dugme uloga-dugme" type="button">Sačuvaj ulogu</button>`);
+    kartica.querySelector('.uloga-izbor').value = korisnik.Role;
+    kartica.querySelector('.uloga-dugme').addEventListener('click', () => promeniUlogu(korisnik, kartica));
     kartica.querySelector('.status-dugme').addEventListener('click', () => promeniStatus(korisnik, kartica));
     kartica.querySelector('.obrisi').addEventListener('click', () => obrisiNalog(korisnik, kartica));
   }
@@ -79,6 +82,27 @@ async function ucitajKorisnike(reset = false) {
   } finally {
     stanje.ucitava = false;
     ucitavanje.hidden = true;
+  }
+}
+
+async function promeniUlogu(korisnik, kartica) {
+  const dugme = kartica.querySelector('.uloga-dugme');
+  const izbor = kartica.querySelector('.uloga-izbor');
+  dugme.disabled = true;
+  izbor.disabled = true;
+  const podaci = new FormData();
+  podaci.append('idNaloga', korisnik.ID);
+  podaci.append('uloga', izbor.value);
+  try {
+    const odgovor = await fetch('../Baza/api.php?akcija=adminPromeniUlogu', { method: 'POST', body: podaci });
+    const rezultat = await odgovor.json();
+    if (!rezultat.uspeh) throw new Error(rezultat.poruka);
+    prikaziPoruku(rezultat.poruka, true);
+    await ucitajKorisnike(true);
+  } catch (greska) {
+    prikaziPoruku(greska.message || 'Uloga naloga nije promenjena.', false);
+    dugme.disabled = false;
+    izbor.disabled = false;
   }
 }
 

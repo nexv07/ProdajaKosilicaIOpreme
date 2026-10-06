@@ -18,7 +18,7 @@ function prikaziPoruku(element, tekst, uspesno) {
 }
 
 function postaviMeni(rezultat) {
-  const adminLink = rezultat.role === 'Admin' ? '<a class="kreiraj-oglas" href="../Admin/Admin.html">Admin</a>' : '';
+  const adminLink = rezultat.role === 'Admin' ? '<a class="kreiraj-oglas" href="../Admin/Admin.html">Admin</a><a class="kreiraj-oglas" href="../UpravljanjeOglasima/UpravljanjeOglasima.html">Upravljanje oglasima</a>' : '';
   korisnikElement.innerHTML = `<button class="korisnicko-ime" type="button" aria-expanded="false">${bezbedanTekst(rezultat.korisnickoIme)}</button><div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><a class="moji-oglasi" href="MojiOglasi.html">Moji oglasi</a>${adminLink}<button class="odjava" type="button">Odjava</button></div>`;
   const imeDugme = korisnikElement.querySelector('.korisnicko-ime');
   const padajuciMeni = korisnikElement.querySelector('.padajuci-meni');

@@ -1,0 +1,30 @@
+.upravljanje-main { max-width: 1150px; }
+.lista-upravljanje-oglasa { display: grid; gap: 14px; }
+.oglas-kartica { display: grid; grid-template-columns: 105px minmax(220px, 1.4fr) minmax(190px, 1fr) auto; gap: 16px; align-items: center; padding: 14px; border: 1px solid #cfe0d0; border-radius: 10px; background: #f8fcf7; }
+.oglas-kartica:hover { border-color: var(--zelena); box-shadow: 0 3px 10px #17321d1a; }
+.oglas-slika { width: 105px; height: 90px; border: 1px solid #cfe0d0; border-radius: 7px; object-fit: cover; background: #eaf5e8; }
+.oglas-naziv { margin: 0 0 3px; color: var(--tamna); font-size: 1.1rem; }
+.oglas-detalji, .oglas-vlasnik, .oglas-datum { margin: 0; color: #48634d; overflow-wrap: anywhere; }
+.oglas-detalji { margin-bottom: 7px; }
+.oglas-vlasnik { font-size: .92rem; }
+.oglas-datum { margin-top: 3px; font-size: .84rem; }
+.oglas-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.status-izbor { min-width: 112px; padding: 8px 9px; border: 1px solid #b7c7b8; border-radius: 7px; background: white; color: var(--tamna); font: inherit; font-size: .86rem; }
+.status-izbor:focus { outline: 3px solid #f39a3466; border-color: var(--narandzasta); }
+.oglas-akcije { display: flex; flex-wrap: wrap; justify-content: end; gap: 8px; }
+.akcija-dugme.status-sacuvaj { border-color: var(--zelena); }
+@media (max-width: 900px) {
+  .oglas-kartica { grid-template-columns: 90px minmax(180px, 1fr) auto; }
+  .oglas-slika { width: 90px; height: 80px; }
+  .oglas-status { grid-column: 2 / -1; grid-row: 2; }
+  .oglas-akcije { grid-column: 1 / -1; grid-row: 3; justify-content: start; }
+}
+@media (max-width: 560px) {
+  .upravljanje-main { padding: 18px 10px 30px; }
+  .admin-okvir { padding: 18px 12px; }
+  .oglas-kartica { grid-template-columns: 80px 1fr; gap: 11px; }
+  .oglas-slika { width: 80px; height: 70px; }
+  .oglas-status, .oglas-akcije { grid-column: 1 / -1; grid-row: auto; }
+  .oglas-akcije { justify-content: start; }
+  .status-izbor { flex: 1; }
+}

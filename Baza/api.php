@@ -168,6 +168,82 @@ if ($akcija === 'adminPromeniStatus') {
     odgovor(true, $aktivnost === 'Da' ? 'Nalog je aktiviran.' : 'Nalog je deaktiviran.');
 }
 
+if ($akcija === 'adminPromeniUlogu') {
+    $admin = zahtevajAdmina($baza);
+    $idNaloga = filter_var($_POST['idNaloga'] ?? null, FILTER_VALIDATE_INT);
+    $uloga = (string)($_POST['uloga'] ?? '');
+    if (!$idNaloga || !in_array($uloga, ['Korisnik', 'Admin'], true)) {
+        odgovor(false, 'Podaci za promenu uloge nisu ispravni.', [], 400);
+    }
+    if ((int)$admin['ID'] === (int)$idNaloga) {
+        odgovor(false, 'Ne možete promeniti ulogu sopstvenog naloga.', [], 400);
+    }
+    $upit = pripremi($baza, 'UPDATE `Nalog` SET `Role` = ? WHERE `ID` = ?');
+    $upit->bind_param('si', $uloga, $idNaloga);
+    $upit->execute();
+    if ($upit->affected_rows < 1) {
+        odgovor(false, 'Korisnik nije pronađen ili uloga nije promenjena.', [], 404);
+    }
+    odgovor(true, 'Uloga naloga je promenjena.');
+}
+
+if ($akcija === 'adminOglasi') {
+    zahtevajAdmina($baza);
+    $stranica = max(1, (int)($_GET['stranica'] ?? 1));
+    $poStranici = min(30, max(1, (int)($_GET['poStranici'] ?? 12)));
+    $pretraga = mb_substr(trim((string)($_GET['pretraga'] ?? '')), 0, 255);
+    $offset = ($stranica - 1) * $poStranici;
+    $obrazac = '%' . $pretraga . '%';
+
+    $broj = pripremi($baza, 'SELECT COUNT(*) AS `Ukupno` FROM `Oglas` WHERE `ImeOglasa` LIKE ?');
+    $broj->bind_param('s', $obrazac);
+    $broj->execute();
+    $ukupno = (int)$broj->get_result()->fetch_assoc()['Ukupno'];
+
+    $upit = pripremi($baza, 'SELECT `O`.`IDOglasa`, `O`.`ImeOglasa`, `O`.`VrstaPogona`, `O`.`Cena`, `O`.`StanjeProizvoda`, `O`.`MestoProdavca`, `O`.`Status`, `O`.`DatumPostavljanja`, `O`.`BrojPregleda`, TO_BASE64(`O`.`SlikaProizvoda`) AS `SlikaProizvoda`, `N`.`Ime`, `N`.`Prezime`, `N`.`Email` FROM `Oglas` `O` INNER JOIN `Nalog` `N` ON `N`.`ID` = `O`.`IDNaloga` WHERE `O`.`ImeOglasa` LIKE ? ORDER BY `O`.`IDOglasa` DESC LIMIT ? OFFSET ?');
+    $upit->bind_param('sii', $obrazac, $poStranici, $offset);
+    $upit->execute();
+    odgovor(true, '', ['oglasi' => $upit->get_result()->fetch_all(MYSQLI_ASSOC), 'ukupno' => $ukupno, 'stranica' => $stranica, 'imaJos' => $offset + $poStranici < $ukupno]);
+}
+
+if ($akcija === 'adminPromeniStatusOglasa') {
+    zahtevajAdmina($baza);
+    $idOglasa = filter_var($_POST['idOglasa'] ?? null, FILTER_VALIDATE_INT);
+    $status = (string)($_POST['status'] ?? '');
+    if (!$idOglasa || !in_array($status, ['Aktivan', 'Neaktivan', 'Prodat'], true)) {
+        odgovor(false, 'Podaci za promenu statusa oglasa nisu ispravni.', [], 400);
+    }
+    $upit = pripremi($baza, 'UPDATE `Oglas` SET `Status` = ? WHERE `IDOglasa` = ?');
+    $upit->bind_param('si', $status, $idOglasa);
+    if (!$upit->execute()) {
+        odgovor(false, 'Status oglasa nije promenjen.', [], 500);
+    }
+    if ($upit->affected_rows < 1) {
+        $provera = pripremi($baza, 'SELECT 1 FROM `Oglas` WHERE `IDOglasa` = ? LIMIT 1');
+        $provera->bind_param('i', $idOglasa);
+        $provera->execute();
+        if (!$provera->get_result()->fetch_assoc()) {
+            odgovor(false, 'Oglas nije pronađen.', [], 404);
+        }
+    }
+    odgovor(true, 'Status oglasa je promenjen.');
+}
+
+if ($akcija === 'adminObrisiOglas') {
+    zahtevajAdmina($baza);
+    $idOglasa = filter_var($_POST['idOglasa'] ?? null, FILTER_VALIDATE_INT);
+    if (!$idOglasa) {
+        odgovor(false, 'Oglas nije pronađen.', [], 404);
+    }
+    $upit = pripremi($baza, 'DELETE FROM `Oglas` WHERE `IDOglasa` = ?');
+    $upit->bind_param('i', $idOglasa);
+    $upit->execute();
+    if ($upit->affected_rows !== 1) {
+        odgovor(false, 'Oglas nije pronađen.', [], 404);
+    }
+    odgovor(true, 'Oglas je obrisan.');
+}
+
 if ($akcija === 'adminObrisiNalog') {
     $admin = zahtevajAdmina($baza);
     $idNaloga = filter_var($_POST['idNaloga'] ?? null, FILTER_VALIDATE_INT);

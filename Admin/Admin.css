@@ -19,7 +19,9 @@
 .oznaka-aktivan { background: #d8f0da; color: #216426; }
 .oznaka-neaktivan { background: #eee; color: #555; }
 .oznaka-admin { background: #ffe5bd; color: #855000; }
-.korisnik-akcije { display: flex; justify-content: end; gap: 8px; }
+.korisnik-akcije { display: flex; justify-content: end; align-items: center; flex-wrap: wrap; gap: 8px; }
+.uloga-izbor { min-width: 105px; padding: 8px 9px; border: 1px solid #b7c7b8; border-radius: 7px; background: white; color: var(--tamna); font: inherit; font-size: .86rem; }
+.uloga-izbor:focus { outline: 3px solid #f39a3466; border-color: var(--narandzasta); }
 .akcija-dugme { padding: 8px 11px; border: 1px solid var(--zelena); border-radius: 7px; background: white; color: var(--tamna); cursor: pointer; font: inherit; font-size: .86rem; font-weight: bold; }
 .akcija-dugme:hover { background: #eaf5e8; }
 .akcija-dugme:disabled { cursor: wait; opacity: .55; }
