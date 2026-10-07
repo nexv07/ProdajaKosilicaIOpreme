@@ -71,8 +71,10 @@ async function ucitajOglase() {
       const ikonicaPregleda = oglas.StanjeProizvoda === 'Novo' ? 'eye1.png' : 'eye2.png';
       listaOglasa.insertAdjacentHTML('beforeend', `
         <div class="oglas ${stanjeKlasa}${statusKlasa}" data-oglas-id="${oglas.IDOglasa}" role="link" tabindex="0" aria-label="Otvori detalje oglasa ${bezbedanTekst(oglas.ImeOglasa)}">
-          <div class="okvir-slike"><img src="data:image/jpeg;base64,${oglas.SlikaProizvoda}" alt="${bezbedanTekst(oglas.ImeOglasa)}"></div>
-          <div class="broj-pregleda"><img src="../Imgs/${ikonicaPregleda}" alt="Broj pregleda"><span>${bezbedanTekst(oglas.BrojPregleda)}</span></div>
+          <div class="okvir-slike">
+            <img src="data:image/jpeg;base64,${oglas.SlikaProizvoda}" alt="${bezbedanTekst(oglas.ImeOglasa)}">
+            <div class="broj-pregleda" aria-label="Broj pregleda: ${bezbedanTekst(oglas.BrojPregleda)}"><img src="../Imgs/${ikonicaPregleda}" alt=""><span>${bezbedanTekst(oglas.BrojPregleda)}</span></div>
+          </div>
           <div class="podaci-oglasa">
             <p class="naziv-oglasa"><strong>${bezbedanTekst(oglas.ImeOglasa)}</strong></p>
             <p class="vrsta-pogona"><strong>${bezbedanTekst(oglas.VrstaPogona)}</strong></p>

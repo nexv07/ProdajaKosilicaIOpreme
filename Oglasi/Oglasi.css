@@ -59,9 +59,10 @@ main { display: flex; align-items: flex-start; gap: 24px; max-width: 1250px; mar
 .oglas-polovno .okvir-slike { border-color: white; }
 .oglas-polovno .cena { color: white; }
 .oglas-novo { background: white; color: var(--tamna); }
-.broj-pregleda { position: absolute; right: 170px; bottom: 16px; z-index: 1; display: flex; align-items: center; gap: 7px; font-size: 1rem; font-weight: bold; }
+.broj-pregleda { position: absolute; right: 10px; bottom: 10px; z-index: 1; display: flex; align-items: center; gap: 7px; padding: 4px 8px; border-radius: 999px; background: rgba(255, 255, 255, .9); color: #000; font-size: 1rem; font-weight: bold; line-height: 1.2; }
 .broj-pregleda img { width: 20px; height: 20px; object-fit: contain; }
-.oglas-polovno .broj-pregleda, .oglas-prodat .broj-pregleda { color: white; }
+.oglas-novo .broj-pregleda { border: 1px solid #000; color: #000; }
+.oglas-polovno .broj-pregleda, .oglas-prodat .broj-pregleda { border: 1px solid white; background: rgba(23, 50, 29, .9); color: white; }
 .oglas-prodat { background: #78171d; color: white; }
 .oglas-prodat .podaci-oglasa, .oglas-prodat .podaci-oglasa * { color: white; }
 .oglas-prodat .okvir-slike { border-color: white; }
@@ -75,7 +76,6 @@ main { display: flex; align-items: flex-start; gap: 24px; max-width: 1250px; mar
   .podaci-oglasa .naziv-oglasa,
   .podaci-oglasa .vrsta-pogona { margin-top: 0; }
   .donji-podaci { gap: 12px; }
-  .broj-pregleda { right: 20px; bottom: 14px; }
 }
 @media (max-width: 400px) {
   main { padding-right: 10px; padding-left: 10px; }

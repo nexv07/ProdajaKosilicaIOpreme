@@ -455,7 +455,7 @@ if ($akcija === 'oglasi') {
         $vrednosti[] = $stanje;
     }
 
-    $sql = 'SELECT `O`.`IDOglasa`, `O`.`BrojTelefona`, `O`.`ImeOglasa`, `O`.`VrstaPogona`, `O`.`Cena`, `O`.`StanjeProizvoda`, `O`.`Status`, `O`.`MestoProdavca`, `O`.`DodatanInfo`, TO_BASE64(`O`.`SlikaProizvoda`) AS `SlikaProizvoda`, `N`.`Ime`, `N`.`Prezime` FROM `Oglas` `O` INNER JOIN `Nalog` `N` ON `N`.`ID` = `O`.`IDNaloga`';
+    $sql = 'SELECT `O`.`IDOglasa`, `O`.`BrojTelefona`, `O`.`ImeOglasa`, `O`.`VrstaPogona`, `O`.`Cena`, `O`.`StanjeProizvoda`, `O`.`Status`, `O`.`MestoProdavca`, `O`.`DodatanInfo`, `O`.`BrojPregleda`, TO_BASE64(`O`.`SlikaProizvoda`) AS `SlikaProizvoda`, `N`.`Ime`, `N`.`Prezime` FROM `Oglas` `O` INNER JOIN `Nalog` `N` ON `N`.`ID` = `O`.`IDNaloga`';
     if ($uslovi) {
         $sql .= ' WHERE ' . implode(' AND ', $uslovi);
     }
