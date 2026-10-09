@@ -109,7 +109,7 @@ fetch('../Baza/api.php?akcija=sesija')
     const adminLink = rezultat.role === 'Admin' ? '<a class="kreiraj-oglas" href="../Admin/Admin.html">Admin</a><a class="kreiraj-oglas" href="../UpravljanjeOglasima/UpravljanjeOglasima.html">Upravljanje oglasima</a>' : '';
     korisnikElement.innerHTML = `
       <button class="korisnicko-ime" type="button" aria-expanded="false">${rezultat.korisnickoIme}</button>
-      <div class="padajuci-meni"><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><a class="kreiraj-oglas moji-oglasi" href="../MojiOglasi/MojiOglasi.html">Moji oglasi</a>${adminLink}<button class="odjava" type="button">Odjava</button></div>`;
+      <div class="padajuci-meni"><a class="kreiraj-oglas" href="../MojNalog/MojNalog.html">Moj nalog</a><a class="kreiraj-oglas" href="../KreiranjeOglasa/KreiranjeOglasa.html">Kreiraj oglas</a><a class="kreiraj-oglas moji-oglasi" href="../MojiOglasi/MojiOglasi.html">Moji oglasi</a>${adminLink}<button class="odjava" type="button">Odjava</button></div>`;
     const imeDugme = korisnikElement.querySelector('.korisnicko-ime');
     const padajuciMeni = korisnikElement.querySelector('.padajuci-meni');
     imeDugme.addEventListener('click', () => {

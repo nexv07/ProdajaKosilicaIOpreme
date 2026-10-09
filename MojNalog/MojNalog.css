@@ -1,0 +1,13 @@
+.nalog-main { display: flex; justify-content: center; padding: 40px 16px; }
+.nalog-okvir { width: 620px; max-width: 100%; padding: 30px; border-radius: 16px; background: white; box-shadow: 0 4px 16px #17321d1a; }
+.nalog-okvir h2 { margin-top: 0; text-align: center; }
+.nalog-opis { margin: -8px 0 24px; color: #48634d; text-align: center; }
+.polje { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.polje label { font-weight: bold; }
+.polje input { width: 100%; padding: 10px 12px; border: 1px solid #b7c7b8; border-radius: 7px; font: inherit; }
+.polje input:focus { outline: 2px solid #8fbd92; border-color: var(--zelena); }
+.nalog-okvir .dugme { display: block; margin: 8px auto 0; }
+.poruka { min-height: 24px; margin-bottom: 0; text-align: center; font-weight: bold; }
+.poruka.uspesno { color: var(--zelena); }
+.poruka.neuspesno { color: #a32626; }
+@media (max-width: 600px) { .nalog-okvir { padding: 20px; } }

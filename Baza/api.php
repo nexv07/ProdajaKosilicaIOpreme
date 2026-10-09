@@ -112,7 +112,7 @@ if ($akcija === 'sesija') {
     if (!isset($_SESSION['email'])) {
         odgovor(true, '', ['ulogovan' => false, 'ime' => null, 'prezime' => null, 'korisnickoIme' => null, 'role' => null]);
     }
-    $sesijaUpit = pripremi($baza, "SELECT `Ime`, `Prezime`, `Role` FROM `Nalog` WHERE `Email` = ? AND `Active` = 'Da' LIMIT 1");
+    $sesijaUpit = pripremi($baza, "SELECT `Ime`, `Prezime`, `Email`, `BrojTelefona`, `Role` FROM `Nalog` WHERE `Email` = ? AND `Active` = 'Da' LIMIT 1");
     $sesijaEmail = (string)$_SESSION['email'];
     $sesijaUpit->bind_param('s', $sesijaEmail);
     $sesijaUpit->execute();
@@ -121,7 +121,50 @@ if ($akcija === 'sesija') {
         odgovor(true, '', ['ulogovan' => false, 'ime' => null, 'prezime' => null, 'korisnickoIme' => null, 'role' => null]);
     }
     $imeZaPrikaz = $sesijaNalog['Ime'] . ' ' . $sesijaNalog['Prezime'];
-    odgovor(true, '', ['ulogovan' => true, 'ime' => $sesijaNalog['Ime'], 'prezime' => $sesijaNalog['Prezime'], 'korisnickoIme' => $imeZaPrikaz, 'role' => $sesijaNalog['Role']]);
+    odgovor(true, '', ['ulogovan' => true, 'ime' => $sesijaNalog['Ime'], 'prezime' => $sesijaNalog['Prezime'], 'email' => $sesijaNalog['Email'], 'brojTelefona' => $sesijaNalog['BrojTelefona'], 'korisnickoIme' => $imeZaPrikaz, 'role' => $sesijaNalog['Role']]);
+}
+
+if ($akcija === 'izmeniNalog') {
+    if (!isset($_SESSION['email'])) {
+        odgovor(false, 'Morate biti ulogovani da biste izmenili nalog.', [], 401);
+    }
+
+    $ime = trim((string)($ulaz['ime'] ?? ''));
+    $prezime = trim((string)($ulaz['prezime'] ?? ''));
+    $email = trim((string)($ulaz['email'] ?? ''));
+    $brojTelefona = trim((string)($ulaz['brojTelefona'] ?? ''));
+    $lozinku = (string)($ulaz['lozinku'] ?? '');
+    $potvrdaLozinke = (string)($ulaz['potvrdaLozinke'] ?? '');
+
+    if ($ime === '' || mb_strlen($ime) > 100 || $prezime === '' || mb_strlen($prezime) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match('/^[0-9+()\s\/-]{6,30}$/u', $brojTelefona)) {
+        odgovor(false, 'Unesite ime, prezime, ispravan email i ispravan broj telefona.', [], 400);
+    }
+    if ($lozinku !== '' && (mb_strlen($lozinku) < 6 || $lozinku !== $potvrdaLozinke)) {
+        odgovor(false, 'Nova lozinka mora imati najmanje 6 karaktera i obe lozinke moraju biti iste.', [], 400);
+    }
+
+    $stariEmail = (string)$_SESSION['email'];
+    $provera = pripremi($baza, 'SELECT 1 FROM `Nalog` WHERE `Email` = ? AND `Email` <> ? LIMIT 1');
+    $provera->bind_param('ss', $email, $stariEmail);
+    $provera->execute();
+    if ($provera->get_result()->num_rows > 0) {
+        odgovor(false, 'Nalog sa unetim emailom već postoji.', [], 409);
+    }
+
+    if ($lozinku !== '') {
+        $lozinkaHash = password_hash($lozinku, PASSWORD_DEFAULT);
+        $izmena = pripremi($baza, 'UPDATE `Nalog` SET `Ime` = ?, `Prezime` = ?, `Email` = ?, `BrojTelefona` = ?, `Lozinku` = ? WHERE `Email` = ?');
+        $izmena->bind_param('ssssss', $ime, $prezime, $email, $brojTelefona, $lozinkaHash, $stariEmail);
+    } else {
+        $izmena = pripremi($baza, 'UPDATE `Nalog` SET `Ime` = ?, `Prezime` = ?, `Email` = ?, `BrojTelefona` = ? WHERE `Email` = ?');
+        $izmena->bind_param('sssss', $ime, $prezime, $email, $brojTelefona, $stariEmail);
+    }
+    if (!$izmena->execute()) {
+        odgovor(false, 'Greška baze pri izmeni naloga: ' . $izmena->error, [], 500);
+    }
+
+    $_SESSION['email'] = $email;
+    odgovor(true, 'Podaci naloga su uspešno sačuvani.', ['ime' => $ime, 'prezime' => $prezime, 'email' => $email, 'brojTelefona' => $brojTelefona, 'korisnickoIme' => $ime . ' ' . $prezime]);
 }
 
 if ($akcija === 'odjava') {
