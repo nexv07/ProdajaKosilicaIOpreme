@@ -9,7 +9,7 @@ header h1 { margin: 0; font-size: 1.5rem; }
 .logo img { width: 48px; height: 48px; object-fit: contain; }
 nav { display: flex; align-items: center; gap: 18px; }
 nav a { color: white; text-decoration: none; font-weight: bold; }
-.korisnik { position: relative; font-size: 1rem; font-weight: bold; }
+.korisnik { position: relative; display: flex; align-items: center; gap: 18px; font-size: 1rem; font-weight: bold; }
 .korisnicko-ime { padding: 0; border: 0; background: transparent; color: white; cursor: pointer; font: inherit; }
 .korisnicko-ime:hover { text-decoration: underline; }
 .rotacija { animation: okreniIme .6s ease-in-out; }

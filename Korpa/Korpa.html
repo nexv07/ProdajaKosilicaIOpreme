@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Korpa | Kosilice Plus</title>
+  <link rel="stylesheet" href="Korpa.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo"><img src="../SajtZaProdajuKosilica/Images/kosilicalogo.png" alt="Kosilica"> <span>Kosilice Plus</span></h1>
+    <nav><a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html">Početna</a><a href="../Oglasi/Oglasi.html">Oglasi</a><div class="korisnik" id="korisnik"></div></nav>
+  </header>
+  <main>
+    <section class="korpa-sadrzaj" aria-labelledby="naslov-korpe">
+      <h2 id="naslov-korpe">Vaša korpa</h2>
+      <div id="stavke-korpe"></div>
+      <p id="prazna-korpa" class="prazna-korpa">Korpa je trenutno prazna.</p>
+      <form class="podaci-porudzbine" id="podaci-porudzbine">
+        <h3>Podaci za dostavu</h3>
+        <label for="grad">Grad</label>
+        <input id="grad" name="grad" type="text" required>
+        <label for="ulica-broj">Ulica i broj</label>
+        <input id="ulica-broj" name="ulica-broj" type="text" required>
+        <label for="nacin-placanja">Način plaćanja</label>
+        <select id="nacin-placanja" name="nacin-placanja" required>
+          <option value="">Izaberite način plaćanja</option>
+          <option value="pouzecem">Pouzećem</option>
+          <option value="kartica">Platna kartica</option>
+          <option value="uplata">Uplata na račun</option>
+        </select>
+        <button class="poruci" type="button">Poruči</button>
+      </form>
+    </section>
+  </main>
+  <script src="Korpa.js"></script>
+</body>
+</html>

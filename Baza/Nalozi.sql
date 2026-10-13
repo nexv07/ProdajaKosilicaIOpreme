@@ -133,3 +133,24 @@ SET `O`.`BrojTelefona` = `N`.`BrojTelefona`
 WHERE `O`.`BrojTelefona` IS NULL OR `O`.`BrojTelefona` = '';
 UPDATE `Oglas` SET `BrojTelefona` = 'Nije unet' WHERE `BrojTelefona` IS NULL OR `BrojTelefona` = '';
 ALTER TABLE `Oglas` MODIFY COLUMN `BrojTelefona` VARCHAR(30) NOT NULL;
+
+CREATE TABLE IF NOT EXISTS `Korpa` (
+    `IDKorpe` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `IDNaloga` INT UNSIGNED NOT NULL,
+    `IDOglasa` INT UNSIGNED NOT NULL,
+    `Kolicina` INT UNSIGNED NOT NULL DEFAULT 1,
+    `DatumDodavanja` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`IDKorpe`),
+    UNIQUE KEY `uq_korpa_nalog_oglas` (`IDNaloga`, `IDOglasa`),
+    KEY `idx_korpa_oglas` (`IDOglasa`),
+    CONSTRAINT `fk_korpa_nalog`
+        FOREIGN KEY (`IDNaloga`) REFERENCES `Nalog` (`ID`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `fk_korpa_oglas`
+        FOREIGN KEY (`IDOglasa`) REFERENCES `Oglas` (`IDOglasa`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;

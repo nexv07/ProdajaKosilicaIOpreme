@@ -5,7 +5,7 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 
 const DB_HOST = '127.0.0.1';
-const DB_NAME = 'nalozi';
+const DB_NAME = 'kosilice';
 const DB_USER = 'root';
 const DB_PASSWORD = '';
 
@@ -470,6 +470,85 @@ if ($akcija === 'obrisiOglas') {
         odgovor(false, 'Oglas nije pronađen ili ne pripada ulogovanom korisniku.', [], 404);
     }
     odgovor(true, 'Oglas je uspešno obrisan.');
+}
+
+if ($akcija === 'dodajUKorpu') {
+    if (!isset($_SESSION['email'])) {
+        odgovor(false, 'Morate biti ulogovani da biste dodali artikal u korpu.', [], 401);
+    }
+
+    $idOglasa = filter_var($ulaz['idOglasa'] ?? null, FILTER_VALIDATE_INT);
+    if (!$idOglasa) {
+        odgovor(false, 'Oglas nije pronaÄ‘en.', [], 404);
+    }
+
+    $nalogUpit = pripremi($baza, "SELECT `ID` FROM `Nalog` WHERE `Email` = ? AND `Active` = 'Da' LIMIT 1");
+    $email = (string)$_SESSION['email'];
+    $nalogUpit->bind_param('s', $email);
+    $nalogUpit->execute();
+    $nalog = $nalogUpit->get_result()->fetch_assoc();
+    if (!$nalog) {
+        odgovor(false, 'KorisniÄki nalog nije pronaÄ‘en.', [], 404);
+    }
+    $idNaloga = (int)$nalog['ID'];
+
+    $oglasUpit = pripremi($baza, "SELECT `N`.`Email` AS `EmailVlasnika` FROM `Oglas` `O` INNER JOIN `Nalog` `N` ON `N`.`ID` = `O`.`IDNaloga` WHERE `O`.`IDOglasa` = ? AND `O`.`Status` <> 'Neaktivan' LIMIT 1");
+    $oglasUpit->bind_param('i', $idOglasa);
+    $oglasUpit->execute();
+    $oglas = $oglasUpit->get_result()->fetch_assoc();
+    if (!$oglas) {
+        odgovor(false, 'Oglas nije dostupan.', [], 404);
+    }
+    if (hash_equals((string)$oglas['EmailVlasnika'], $email)) {
+        odgovor(false, 'Ne možete dodati sopstveni oglas u korpu.', [], 400);
+    }
+
+    $stavkaUpit = pripremi($baza, 'SELECT `IDKorpe` FROM `Korpa` WHERE `IDNaloga` = ? AND `IDOglasa` = ? LIMIT 1');
+    $stavkaUpit->bind_param('ii', $idNaloga, $idOglasa);
+    $stavkaUpit->execute();
+    $stavka = $stavkaUpit->get_result()->fetch_assoc();
+    if ($stavka) {
+        $izmena = pripremi($baza, 'UPDATE `Korpa` SET `Kolicina` = `Kolicina` + 1 WHERE `IDKorpe` = ?');
+        $idKorpe = (int)$stavka['IDKorpe'];
+        $izmena->bind_param('i', $idKorpe);
+        $izmena->execute();
+    } else {
+        $unos = pripremi($baza, 'INSERT INTO `Korpa` (`IDNaloga`, `IDOglasa`, `Kolicina`) VALUES (?, ?, 1)');
+        $unos->bind_param('ii', $idNaloga, $idOglasa);
+        $unos->execute();
+    }
+    odgovor(true, 'Artikal je dodat u korpu.');
+}
+
+if ($akcija === 'korpa') {
+    if (!isset($_SESSION['email'])) {
+        odgovor(false, 'Morate biti ulogovani da biste videli korpu.', [], 401);
+    }
+
+    $upit = pripremi($baza, 'SELECT `K`.`IDKorpe`, `K`.`IDOglasa`, `K`.`Kolicina`, `O`.`ImeOglasa`, `O`.`Cena`, TO_BASE64(`O`.`SlikaProizvoda`) AS `SlikaProizvoda` FROM `Korpa` `K` INNER JOIN `Nalog` `N` ON `N`.`ID` = `K`.`IDNaloga` INNER JOIN `Oglas` `O` ON `O`.`IDOglasa` = `K`.`IDOglasa` WHERE `N`.`Email` = ? ORDER BY `K`.`DatumDodavanja` DESC');
+    $email = (string)$_SESSION['email'];
+    $upit->bind_param('s', $email);
+    $upit->execute();
+    odgovor(true, '', ['stavke' => $upit->get_result()->fetch_all(MYSQLI_ASSOC)]);
+}
+
+if ($akcija === 'ukloniIzKorpe') {
+    if (!isset($_SESSION['email'])) {
+        odgovor(false, 'Morate biti ulogovani da biste menjali korpu.', [], 401);
+    }
+
+    $idOglasa = filter_var($ulaz['idOglasa'] ?? null, FILTER_VALIDATE_INT);
+    if (!$idOglasa) {
+        odgovor(false, 'Artikal nije pronaÄ‘en u korpi.', [], 404);
+    }
+    $upit = pripremi($baza, 'DELETE `K` FROM `Korpa` `K` INNER JOIN `Nalog` `N` ON `N`.`ID` = `K`.`IDNaloga` WHERE `K`.`IDOglasa` = ? AND `N`.`Email` = ?');
+    $email = (string)$_SESSION['email'];
+    $upit->bind_param('is', $idOglasa, $email);
+    $upit->execute();
+    if ($upit->affected_rows < 1) {
+        odgovor(false, 'Artikal nije pronaÄ‘en u korpi.', [], 404);
+    }
+    odgovor(true, 'Artikal je uklonjen iz korpe.');
 }
 
 if ($akcija === 'oglasi') {

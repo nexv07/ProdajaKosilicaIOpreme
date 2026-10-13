@@ -9,7 +9,7 @@ header h1 { margin: 0; font-size: 1.5rem; }
 .logo img { width: 48px; height: 48px; object-fit: contain; }
 nav { display: flex; align-items: center; gap: 18px; }
 nav a { color: white; text-decoration: none; font-weight: bold; }
-.korisnik { position: relative; font-size: 1rem; font-weight: bold; }
+.korisnik { position: relative; display: flex; align-items: center; gap: 18px; font-size: 1rem; font-weight: bold; }
 .korisnicko-ime { padding: 0; border: 0; background: transparent; color: white; cursor: pointer; font: inherit; }
 .korisnicko-ime:hover { text-decoration: underline; }
 .rotacija { animation: okreniIme .6s ease-in-out; }
@@ -21,8 +21,11 @@ nav a { color: white; text-decoration: none; font-weight: bold; }
 .korisnik .odjava { width: 100%; padding: 9px 14px; border: 0; border-radius: 6px; background: var(--zelena); color: white; cursor: pointer; font-size: 1rem; font-weight: bold; }
 .korisnik .odjava:hover { background: #256528; }
 .detalji-oglasa { display: flex; gap: 20px; width: 700px; min-height: 700px; max-width: calc(100% - 32px); margin: 40px auto; padding: 10px; border-radius: 16px; background: white; box-shadow: 0 4px 16px #17321d1a; }
-.okvir-slike { flex: 0 0 330px; width: 330px; height: 330px; border: 2px solid var(--zelena); border-radius: 8px; overflow: hidden; }
-.okvir-slike img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.okvir-slike { display: flex; flex: 0 0 330px; width: 330px; height: auto; align-self: flex-start; flex-direction: column; border: 2px solid var(--zelena); border-radius: 8px; overflow: hidden; }
+.okvir-slike img { display: block; width: 100%; height: 330px; object-fit: cover; }
+.dodaj-u-korpu { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; padding: 10px 14px; border: 0; background: var(--zelena); color: white; font: inherit; font-weight: bold; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+.dodaj-u-korpu:hover { background: #256528; transform: translateY(-1px); }
+.dodaj-u-korpu:focus-visible { outline: 3px solid #b8e986; outline-offset: -3px; }
 .podaci-oglasa { display: flex; min-width: 0; flex: 1; flex-direction: column; padding: 10px; overflow-wrap: anywhere; }
 .podaci-oglasa h2 { margin: 10px 0 20px; font-size: 1.4rem; }
 .podaci-oglasa p { margin: 0 0 14px; overflow-wrap: anywhere; }
@@ -33,7 +36,8 @@ nav a { color: white; text-decoration: none; font-weight: bold; }
 .kontakt-telefon span { color: var(--zelena); font-size: 1.2rem; font-weight: bold; }
 @media (max-width: 720px) {
   .detalji-oglasa { width: 100%; max-width: calc(100% - 20px); min-height: 0; margin: 24px auto; flex-direction: column; gap: 18px; }
-  .okvir-slike { width: 100%; height: auto; aspect-ratio: 1; flex-basis: auto; }
+  .okvir-slike { width: 100%; height: auto; aspect-ratio: auto; flex-basis: auto; }
+  .okvir-slike img { height: auto; aspect-ratio: 1; }
   .podaci-oglasa { padding: 0; }
   .podaci-oglasa h2 { margin-top: 0; font-size: clamp(1.15rem, 5vw, 1.4rem); }
   .kontakt-telefon { margin-top: 24px; }
