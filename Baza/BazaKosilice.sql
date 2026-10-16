@@ -154,3 +154,34 @@ CREATE TABLE IF NOT EXISTS `Korpa` (
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `Porudzbine` (
+    `IDPorudzbine` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `Ime` VARCHAR(100) NOT NULL,
+    `Prezime` VARCHAR(100) NOT NULL,
+    `Email` VARCHAR(255) NOT NULL,
+    `BrojTelefona` VARCHAR(30) NOT NULL,
+    `IDNaloga` INT UNSIGNED NULL,
+    `IDOglasa` INT UNSIGNED NULL,
+    `ImeOglasa` VARCHAR(255) NOT NULL,
+    `Kolicina` INT UNSIGNED NOT NULL,
+    `Cena` DECIMAL(12,2) NOT NULL,
+    `Adresa` VARCHAR(255) NOT NULL,
+    `Grad` VARCHAR(100) NOT NULL,
+    `NacinPlacanja` ENUM('pouzecem', 'kartica', 'uplata') NOT NULL,
+    `Status` ENUM('Nova', 'Obradjena', 'Poslata', 'Zavrsena', 'Otkazana') NOT NULL DEFAULT 'Nova',
+    `DatumPorucivanja` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`IDPorudzbine`),
+    KEY `idx_porudzbine_nalog` (`IDNaloga`),
+    KEY `idx_porudzbine_oglas` (`IDOglasa`),
+    CONSTRAINT `fk_porudzbine_nalog`
+        FOREIGN KEY (`IDNaloga`) REFERENCES `Nalog` (`ID`)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_porudzbine_oglas`
+        FOREIGN KEY (`IDOglasa`) REFERENCES `Oglas` (`IDOglasa`)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;

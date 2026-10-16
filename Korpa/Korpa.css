@@ -35,4 +35,17 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 16px; }
 .podaci-porudzbine input:focus, .podaci-porudzbine select:focus { outline: 2px solid #8fca8f; border-color: var(--zelena); }
 .poruci { width: fit-content; margin-top: 10px; padding: 11px 26px; border: 0; border-radius: 8px; background: var(--zelena); color: white; font: inherit; font-weight: bold; cursor: pointer; }
 .poruci:hover { background: #256528; }
-@media (max-width: 600px) { header { flex-direction: column; text-align: center; } nav { flex-wrap: wrap; justify-content: center; gap: 12px; } .korpa-sadrzaj { padding: 20px; } .stavka { align-items: flex-start; flex-wrap: wrap; } .ukloni { margin-left: 102px; } }
+.lista-porudzbina { display: grid; gap: 16px; }
+.porudzbina-kartica { padding: 16px; border: 2px solid var(--zelena); border-radius: 10px; background: #fbfdfb; }
+.porudzbina-kartica h3 { margin: 0 0 8px; color: var(--zelena); }
+.porudzbina-kartica p { margin: 4px 0; }
+.porudzbina-kartica strong { color: var(--tamna); }
+.pretraga-forma { display: flex; gap: 10px; margin: 18px 0 12px; }
+.pretraga-forma input { min-width: 0; flex: 1; padding: 12px 14px; border: 1px solid #b7c7b8; border-radius: 8px; color: var(--tamna); font: inherit; }
+.pretraga-forma input:focus { outline: 3px solid #8fca8f; border-color: var(--zelena); }
+.pretraga-forma .dugme { padding: 10px 20px; border: 0; border-radius: 8px; background: var(--zelena); color: white; cursor: pointer; font: inherit; font-weight: bold; }
+.pretraga-forma .dugme:hover { background: #256528; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.ucitavanje-porudzbina, .nema-porudzbina { color: #48634d; text-align: center; font-weight: bold; }
+.sentinel-porudzbine { height: 1px; }
+@media (max-width: 600px) { header { flex-direction: column; text-align: center; } nav { flex-wrap: wrap; justify-content: center; gap: 12px; } .korpa-sadrzaj { padding: 20px; } .stavka { align-items: flex-start; flex-wrap: wrap; } .ukloni { margin-left: 102px; } .pretraga-forma { flex-direction: column; } .pretraga-forma .dugme { width: 100%; } }

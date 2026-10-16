@@ -551,6 +551,91 @@ if ($akcija === 'ukloniIzKorpe') {
     odgovor(true, 'Artikal je uklonjen iz korpe.');
 }
 
+if ($akcija === 'poruci') {
+    if (!isset($_SESSION['email'])) {
+        odgovor(false, 'Morate biti ulogovani da biste poruÄili.', [], 401);
+    }
+
+    $grad = trim((string)($ulaz['grad'] ?? ''));
+    $adresa = trim((string)($ulaz['adresa'] ?? ''));
+    $nacinPlacanja = (string)($ulaz['nacinPlacanja'] ?? '');
+    if ($grad === '' || mb_strlen($grad) > 100 || $adresa === '' || mb_strlen($adresa) > 255 || !in_array($nacinPlacanja, ['pouzecem', 'kartica', 'uplata'], true)) {
+        odgovor(false, 'Popunite grad, adresu i naÄin plaÄ‡anja.', [], 400);
+    }
+
+    $email = (string)$_SESSION['email'];
+    $nalogUpit = pripremi($baza, "SELECT `ID`, `Ime`, `Prezime`, `Email`, `BrojTelefona` FROM `Nalog` WHERE `Email` = ? AND `Active` = 'Da' LIMIT 1");
+    $nalogUpit->bind_param('s', $email);
+    $nalogUpit->execute();
+    $nalog = $nalogUpit->get_result()->fetch_assoc();
+    if (!$nalog) {
+        odgovor(false, 'KorisniÄki nalog nije pronaÄ‘en.', [], 404);
+    }
+
+    $stavkeUpit = pripremi($baza, 'SELECT `K`.`IDOglasa`, `K`.`Kolicina`, `O`.`ImeOglasa`, `O`.`Cena` FROM `Korpa` `K` INNER JOIN `Nalog` `N` ON `N`.`ID` = `K`.`IDNaloga` INNER JOIN `Oglas` `O` ON `O`.`IDOglasa` = `K`.`IDOglasa` WHERE `N`.`Email` = ?');
+    $stavkeUpit->bind_param('s', $email);
+    $stavkeUpit->execute();
+    $stavke = $stavkeUpit->get_result()->fetch_all(MYSQLI_ASSOC);
+    if (!$stavke) {
+        odgovor(false, 'Korpa je prazna.', [], 400);
+    }
+
+    $baza->begin_transaction();
+    try {
+        $unos = pripremi($baza, 'INSERT INTO `Porudzbine` (`Ime`, `Prezime`, `Email`, `BrojTelefona`, `IDNaloga`, `IDOglasa`, `ImeOglasa`, `Kolicina`, `Cena`, `Adresa`, `Grad`, `NacinPlacanja`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        foreach ($stavke as $stavka) {
+            $ime = (string)$nalog['Ime'];
+            $prezime = (string)$nalog['Prezime'];
+            $telefon = (string)$nalog['BrojTelefona'];
+            $idNaloga = (int)$nalog['ID'];
+            $idOglasa = (int)$stavka['IDOglasa'];
+            $imeOglasa = (string)$stavka['ImeOglasa'];
+            $kolicina = (int)$stavka['Kolicina'];
+            $cena = (float)$stavka['Cena'];
+            $unos->bind_param('ssssiisidsss', $ime, $prezime, $email, $telefon, $idNaloga, $idOglasa, $imeOglasa, $kolicina, $cena, $adresa, $grad, $nacinPlacanja);
+            if (!$unos->execute()) {
+                throw new RuntimeException('Upis porudÅ¾bine nije uspeo.');
+            }
+        }
+
+        $brisanje = pripremi($baza, 'DELETE `K` FROM `Korpa` `K` INNER JOIN `Nalog` `N` ON `N`.`ID` = `K`.`IDNaloga` WHERE `N`.`Email` = ?');
+        $brisanje->bind_param('s', $email);
+        if (!$brisanje->execute()) {
+            throw new RuntimeException('PraÅ¾njenje korpe nije uspelo.');
+        }
+        $baza->commit();
+    } catch (Throwable $greska) {
+        $baza->rollback();
+        odgovor(false, 'PorudÅ¾bina nije saÄuvana.', [], 500);
+    }
+    odgovor(true, 'PorudÅ¾bina je uspeÅ¡no saÄuvana.');
+}
+
+if ($akcija === 'mojePorudzbine') {
+    if (!isset($_SESSION['email'])) {
+        odgovor(false, 'Morate biti ulogovani da biste videli porudÅ¾bine.', [], 401);
+    }
+    $upit = pripremi($baza, 'SELECT `IDPorudzbine`, `Ime`, `Prezime`, `Email`, `BrojTelefona`, `IDNaloga`, `IDOglasa`, `ImeOglasa`, `Kolicina`, `Cena`, `Adresa`, `Grad`, `NacinPlacanja`, `Status`, `DatumPorucivanja` FROM `Porudzbine` WHERE `Email` = ? ORDER BY `DatumPorucivanja` DESC, `IDPorudzbine` DESC');
+    $email = (string)$_SESSION['email'];
+    $upit->bind_param('s', $email);
+    $upit->execute();
+    odgovor(true, '', ['porudzbine' => $upit->get_result()->fetch_all(MYSQLI_ASSOC)]);
+}
+
+if ($akcija === 'adminPorudzbine') {
+    zahtevajAdmina($baza);
+    $stranica = max(1, (int)($_GET['stranica'] ?? 1));
+    $poStranici = 15;
+    $offset = ($stranica - 1) * $poStranici;
+    $pretraga = mb_substr(trim((string)($_GET['pretraga'] ?? '')), 0, 255);
+    $obrazac = '%' . $pretraga . '%';
+    $upit = pripremi($baza, 'SELECT `IDPorudzbine`, `Ime`, `Prezime`, `Email`, `BrojTelefona`, `IDNaloga`, `IDOglasa`, `ImeOglasa`, `Kolicina`, `Cena`, `Adresa`, `Grad`, `NacinPlacanja`, `Status`, `DatumPorucivanja` FROM `Porudzbine` WHERE (? = \'\' OR `Ime` LIKE ? OR `Prezime` LIKE ? OR `Email` LIKE ? OR CONCAT(`Ime`, \' \', `Prezime`) LIKE ?) ORDER BY `DatumPorucivanja` DESC, `IDPorudzbine` DESC LIMIT ? OFFSET ?');
+    $upit->bind_param('sssssii', $pretraga, $obrazac, $obrazac, $obrazac, $obrazac, $poStranici, $offset);
+    $upit->execute();
+    $porudzbine = $upit->get_result()->fetch_all(MYSQLI_ASSOC);
+    odgovor(true, '', ['porudzbine' => $porudzbine, 'stranica' => $stranica, 'imaJos' => count($porudzbine) === $poStranici]);
+}
+
 if ($akcija === 'oglasi') {
     $dozvoljeneVrstePogona = ['Benzin/mesavina', 'Elektro', 'Akumulatorski', 'Ostalo'];
     $ulazneVrstePogona = $_GET['vrstaPogona'] ?? [];

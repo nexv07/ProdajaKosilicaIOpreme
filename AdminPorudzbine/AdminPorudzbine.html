@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sve porudžbine | Kosilice Plus</title>
+  <link rel="stylesheet" href="../Korpa/Korpa.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo"><img src="../SajtZaProdajuKosilica/Images/kosilicalogo.png" alt="Kosilica"> <span>Kosilice Plus</span></h1>
+    <nav><a href="../SajtZaProdajuKosilica/SajtZaProdajuKosilica.html">Početna</a><a href="../Oglasi/Oglasi.html">Oglasi</a><div class="korisnik" id="korisnik"></div></nav>
+  </header>
+  <main>
+    <section class="korpa-sadrzaj" aria-labelledby="naslov-porudzbina">
+      <h2 id="naslov-porudzbina">Sve porudžbine</h2>
+      <form id="pretraga-forma" class="pretraga-forma" role="search">
+        <label class="sr-only" for="pretraga-porudzbina">Pretražite porudžbine</label>
+        <input id="pretraga-porudzbina" type="search" placeholder="Pretraži po imenu, prezimenu ili e-mailu..." autocomplete="off">
+        <button class="dugme" type="submit">Pretraži</button>
+      </form>
+      <p id="poruka-porudzbine">Trenutno nema porudžbina.</p>
+      <div id="lista-porudzbina" class="lista-porudzbina"></div>
+      <p id="ucitavanje-porudzbina" class="ucitavanje-porudzbina" hidden>Učitavanje porudžbina...</p>
+      <p id="nema-porudzbina" class="nema-porudzbina" hidden>Nema porudžbina koje odgovaraju pretrazi.</p>
+      <div id="sentinel-porudzbine" class="sentinel-porudzbine" aria-hidden="true"></div>
+    </section>
+  </main>
+  <script src="AdminPorudzbine.js"></script>
+</body>
+</html>
