@@ -1,0 +1,76 @@
+/* Zajednički izgled navigacije na svim stranicama */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+nav > a,
+nav > .korisnik > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 1px solid rgba(255, 255, 255, .35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+nav > a:hover,
+nav > a:focus-visible,
+nav > .korisnik > a:hover,
+nav > .korisnik > a:focus-visible {
+  border-color: white;
+  background: rgba(255, 255, 255, .24);
+  box-shadow: 0 5px 14px rgba(16, 55, 24, .28);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+nav > a.aktivno,
+nav > a[aria-current="page"],
+nav > .korisnik > a.aktivno,
+nav > .korisnik > a[aria-current="page"] {
+  border-color: white;
+  background: white;
+  color: var(--zelena);
+  box-shadow: 0 4px 12px rgba(16, 55, 24, .22);
+}
+
+nav > a.aktivno:hover,
+nav > a.aktivno:focus-visible,
+nav > a[aria-current="page"]:hover,
+nav > a[aria-current="page"]:focus-visible,
+nav > .korisnik > a.aktivno:hover,
+nav > .korisnik > a.aktivno:focus-visible,
+nav > .korisnik > a[aria-current="page"]:hover,
+nav > .korisnik > a[aria-current="page"]:focus-visible {
+  background: #f4ffef;
+  color: var(--zelena);
+}
+
+/* U korisničkom delu nav bara Korpa ide pre imena korisnika. */
+nav > .korisnik > .link-korpa { order: 1; }
+nav > .korisnik > .korisnicko-ime { order: 2; }
+nav > .korisnik > .padajuci-meni { order: 3; }
+
+.korisnicko-ime.rotacija {
+  animation: okreniIme .6s ease-in-out;
+}
+
+@keyframes okreniIme {
+  from { transform: rotateY(0); }
+  to { transform: rotateY(360deg); }
+}
+
+@media (max-width: 600px) {
+  nav > a,
+  nav > .korisnik > a {
+    min-width: 120px;
+  }
+}
